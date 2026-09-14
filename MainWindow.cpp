@@ -16,7 +16,9 @@
 #include "DrumPadsKey.h"
 #include "SettingsDialog.h"
 #include "Midi/MidiFile.h"
+#ifdef HANDYKARAOKE_ENABLE_HNK
 #include "Midi/HNKFile.h"
+#endif
 #include "Dialogs/AboutDialog.h"
 #include "Dialogs/MapSoundfontDialog.h"
 #include "Dialogs/MapChannelDialog.h"
@@ -551,6 +553,7 @@ void MainWindow::play(int index, int position)
             Utils::readCurFile(curPath, player->midiFile()->resorution()));
 
     }
+#ifdef HANDYKARAOKE_ENABLE_HNK
     else if (playingSong.songType() == "HNK")
     {
         // HNK File
@@ -582,6 +585,15 @@ void MainWindow::play(int index, int position)
             Utils::readCurFile(HNKFile::curData(p), player->midiFile()->resorution()));
 
     }
+#else
+    else if (playingSong.songType() == "HNK")
+    {
+        QMessageBox::information(this, tr("ยังไม่รองรับไฟล์ HNK"),
+                                 tr("HNK เป็นความสามารถเสริมและยังไม่ได้เปิดใช้ในรุ่นนี้."),
+                                 QMessageBox::Ok);
+        return;
+    }
+#endif
     else if (playingSong.songType() == "KAR")
     {
         // KAR file

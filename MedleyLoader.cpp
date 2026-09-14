@@ -6,7 +6,9 @@
 #include "Song.h"
 #include "SongDatabase.h"
 #include "Midi/MidiPlayer.h"
+#ifdef HANDYKARAOKE_ENABLE_HNK
 #include "Midi/HNKFile.h"
+#endif
 #include "Widgets/LyricsWidget.h"
 
 
@@ -45,6 +47,7 @@ void MedleyLoader::run()
         _lyrWidget->setLyricsTemp(Utils::readLyrics(lyrPath),
             Utils::readCurFile(curPath, _player->midiFileTemp()->resorution()));
     }
+#ifdef HANDYKARAOKE_ENABLE_HNK
     else if (_song->songType() == "HNK")
     {
         QString hnkPath = _songDb->hnkPath() + _song->path();
@@ -64,6 +67,7 @@ void MedleyLoader::run()
         _lyrWidget->setLyricsTemp(Utils::readLyrics(HNKFile::lyrData(hnkPath)),
             Utils::readCurFile(HNKFile::curData(hnkPath), _player->midiFileTemp()->resorution()));
     }
+#endif
     else if (_song->songType() == "KAR")
     {
         QString karPath = _songDb->karPath() + _song->path();

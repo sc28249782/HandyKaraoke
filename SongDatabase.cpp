@@ -1,7 +1,9 @@
 #include "SongDatabase.h"
 
 #include "Midi/MidiFile.h"
+#ifdef HANDYKARAOKE_ENABLE_HNK
 #include "Midi/HNKFile.h"
+#endif
 #include "Config.h"
 
 #include <QDir>
@@ -259,6 +261,7 @@ bool SongDatabase::insertNCN(const QString &ncnPath, const QString &songId, cons
     return true;
 }
 
+#ifdef HANDYKARAOKE_ENABLE_HNK
 bool SongDatabase::insertHNK(const QString &hnkPath, const QString &songId, const QString &hnkFilePath)
 {
     QString id = songId;
@@ -307,6 +310,7 @@ bool SongDatabase::insertHNK(const QString &hnkPath, const QString &songId, cons
 
     return true;
 }
+#endif
 
 bool SongDatabase::insertKAR(const QString &karPath, const QString &songId, const QString &karFilePath, const QString &fileName)
 {
@@ -586,12 +590,14 @@ bool SongDatabase::removeCurrentSong(bool removeFromStorage)
            f.setFileName(lyrFilePath);
            f.remove();
        }
+#ifdef HANDYKARAOKE_ENABLE_HNK
        else if (song->songType() == "HNK")
        {
            QString path = _hnkPath + song->path();
            QFile f(path);
            f.remove();
        }
+#endif
        else if (song->songType() == "KAR")
        {
            QString path = _karPath + song->path();
@@ -617,7 +623,9 @@ void SongDatabase::run()
 
     // Count mid file in NCN
     QDir dir(_ncnPath + "/Song");
+#ifdef HANDYKARAOKE_ENABLE_HNK
     QDir hnkDir(_hnkPath);
+#endif
     QDir karDir(_karPath);
 
     QDirIterator iter1(dir.path() ,QStringList() << "*.mid" << "*.MID",
@@ -627,12 +635,14 @@ void SongDatabase::run()
         count++;
     }
 
+#ifdef HANDYKARAOKE_ENABLE_HNK
     QDirIterator iter2(hnkDir.path() ,QStringList() << "*.hnk" << "*.HNK",
                     QDir::Files, QDirIterator::Subdirectories);
     while (iter2.hasNext()) {
         iter2.next();
         count++;
     }
+#endif
 
     QDirIterator iter3(karDir.path() ,QStringList() << "*.kar" << "*.KAR" << "*.mid" << "*.MID",
                     QDir::Files, QDirIterator::Subdirectories);
@@ -679,6 +689,7 @@ void SongDatabase::run()
     }
 
 
+#ifdef HANDYKARAOKE_ENABLE_HNK
     // Update HNK
     QDirIterator it2(hnkDir.path() ,QStringList() << "*.hnk" << "*.HNK",
                      QDir::Files, QDirIterator::Subdirectories);
@@ -697,6 +708,7 @@ void SongDatabase::run()
         if (!result)
             erCount ++;
     }
+#endif
 
     // Update KAR
     QDirIterator it3(karDir.path() ,QStringList() << "*.kar" << "*.KAR" << "*.mid" << "*.MID",
