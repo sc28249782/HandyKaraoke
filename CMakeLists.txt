@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.21)
 
 project(HandyKaraoke VERSION 3.0.0 LANGUAGES CXX RC)
 
-# This CMake project is the recovery build.  The legacy qmake project remains
+# This CMake project is the recovery build. The legacy qmake project remains
 # authoritative until this target builds and passes its smoke tests.
 option(HK_ENFORCE_COMPLETE_SOURCE
        "Stop configuration when required source files are missing" ON)
@@ -23,6 +23,10 @@ if(NOT HK_QT_MAJOR_VERSION MATCHES "^[56]$")
 endif()
 
 find_package(Qt${HK_QT_MAJOR_VERSION} 5.15 REQUIRED COMPONENTS Core Gui Widgets Sql)
+if(HK_QT_MAJOR_VERSION STREQUAL "5")
+    # Included by the legacy qmake project on Windows.
+    find_package(Qt5 5.15 REQUIRED COMPONENTS WinExtras)
+endif()
 
 set(HK_REQUIRED_HNK_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/Midi/HNKFile.cpp"
@@ -104,7 +108,10 @@ if(WIN32)
         HandyKaraoke::BASSVST
         HandyKaraoke::WinSparkle
     )
+    if(HK_QT_MAJOR_VERSION STREQUAL "5")
+        target_link_libraries(HandyKaraoke PRIVATE Qt5::WinExtras)
+    endif()
 endif()
 
-# Qt 6 support is an explicit migration goal.  A successful Qt 5 recovery build
+# Qt 6 support is an explicit migration goal. A successful Qt 5 recovery build
 # is required before treating a Qt 6 build as a release candidate.
