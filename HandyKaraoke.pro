@@ -10,6 +10,28 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++11
 
+# HNK support is intentionally off while its reader source is unavailable.
+# Enable only after restoring authorised HNK source files:
+#   qmake CONFIG+=hnk
+contains(CONFIG, hnk) {
+    !exists($PWD/Midi/HNKFile.cpp) {
+        error("HNK requested but Midi/HNKFile.cpp is missing")
+    }
+    !exists($PWD/Midi/HNKFile.h) {
+        error("HNK requested but Midi/HNKFile.h is missing")
+    }
+    !exists($PWD/Midi/HNKFileComp.h) {
+        error("HNK requested but Midi/HNKFileComp.h is missing")
+    }
+
+    DEFINES += HANDYKARAOKE_ENABLE_HNK
+    SOURCES += Midi/HNKFile.cpp
+    HEADERS += Midi/HNKFile.h \
+               Midi/HNKFileComp.h
+} else {
+    message("HNK support disabled")
+}
+
 TARGET = HandyKaraoke
 TEMPLATE = app
 
@@ -53,7 +75,6 @@ SOURCES += main.cpp\
     Widgets/PlaybackButton.cpp \
     Widgets/FaderSlider.cpp \
     Widgets/VSTLabel.cpp \
-    Midi/HNKFile.cpp \
     BASSFX/FX.cpp \
     Widgets/CustomFXList.cpp \
     Dialogs/BusDialog.cpp \
@@ -124,7 +145,6 @@ HEADERS  += MainWindow.h \
     Widgets/PlaybackButton.h \
     Widgets/FaderSlider.h \
     Widgets/VSTLabel.h \
-    Midi/HNKFile.h \
     BASSFX/FX.h \
     Widgets/CustomFXList.h \
     Dialogs/BusDialog.h \
@@ -155,7 +175,6 @@ HEADERS  += MainWindow.h \
     BASSFX/Chorus2FX.h \
     BASSFX/Reverb2FX.h \
     Dialogs/Reverb2Dialog.h \
-    Midi/HNKFileComp.h \
     Dialogs/DeleteSongDialog.h
 
 FORMS    += MainWindow.ui \
