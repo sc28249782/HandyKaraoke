@@ -4,8 +4,8 @@ project(HandyKaraoke VERSION 3.0.0 LANGUAGES CXX RC)
 
 # This CMake project is the recovery build. The legacy qmake project remains
 # authoritative until this target builds and passes its smoke tests.
-option(HK_ENFORCE_COMPLETE_SOURCE
-       "Stop configuration when required source files are missing" ON)
+option(HK_ENABLE_HNK
+       "Build the optional HNK reader (requires the missing HNK source files)" OFF)
 set(HK_QT_MAJOR_VERSION "5" CACHE STRING
     "Qt major version for the recovery build (currently 5)")
 set_property(CACHE HK_QT_MAJOR_VERSION PROPERTY STRINGS 5 6)
@@ -34,13 +34,13 @@ set(HK_REQUIRED_HNK_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/Midi/HNKFileComp.h"
 )
 
-if(HK_ENFORCE_COMPLETE_SOURCE)
+if(HK_ENABLE_HNK)
     foreach(required_file IN LISTS HK_REQUIRED_HNK_FILES)
         if(NOT EXISTS "${required_file}")
             message(FATAL_ERROR
                 "Required HNK source is missing: ${required_file}\n"
-                "See docs/PHASE-0-BUILD-RECOVERY.md and docs/WORK-QUEUE.md.\n"
-                "Do not disable this check to create a release.")
+                "Set HK_ENABLE_HNK=OFF to build without optional HNK support, or\n"
+                "see docs/PHASE-0-BUILD-RECOVERY.md and docs/WORK-QUEUE.md.")
         endif()
     endforeach()
 endif()
@@ -90,6 +90,10 @@ target_include_directories(HandyKaraoke PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/Widgets"
     "${CMAKE_CURRENT_SOURCE_DIR}/Midi"
 )
+
+if(HK_ENABLE_HNK)
+    target_compile_definitions(HandyKaraoke PRIVATE HANDYKARAOKE_ENABLE_HNK=1)
+endif()
 
 target_link_libraries(HandyKaraoke PRIVATE
     Qt${HK_QT_MAJOR_VERSION}::Core
