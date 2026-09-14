@@ -9,13 +9,16 @@ enabled.
 **Why:** The public source references missing HNK reader files and cannot fully
 build without a decision.
 
+- [x] Feature-gate HNK and disable it by default in CMake, qmake, scanning,
+      playback, medley loading, and Settings.
 - [ ] Contact the original maintainer for the missing source, format
       documentation, and permission.
 - [ ] Record the outcome in `docs/`.
-- [ ] Either restore and test HNK support, or remove/feature-gate it from the
-      recovery build.
+- [ ] Restore and test HNK support only if the legal and technical requirements
+      are met.
 
-**Done when:** the build never references missing source files.
+**Done when:** the default build never references missing HNK source files and
+the optional path has a documented compatibility decision.
 
 ## P1 — Reproducible Windows x64 build
 
@@ -24,8 +27,9 @@ build without a decision.
 - [x] Add a CMake + Ninja recovery manifest for the legacy Windows x64 source.
 - [x] Keep qmake as the legacy reference and document the first configure
       command in `BUILDING.md`.
-- [ ] Restore/feature-gate HNK code and run the first real clean-checkout
-      configure and compilation.
+- [x] Feature-gate HNK code so the default build does not require missing
+      source files.
+- [ ] Run the first real clean-checkout configure and compilation.
 - [ ] Resolve the compiler and runtime findings from that build.
 - [ ] Migrate to Qt 6 only after a verified Qt 5.15 recovery build.
 
