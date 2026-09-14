@@ -162,6 +162,14 @@ SettingsDialog::SettingsDialog(QWidget *parent, MainWindow *m) :
     ui->leNCNPath->setText(db->ncnPath());
     ui->leHNKPath->setText(db->hnkPath());
     ui->leKARPath->setText(db->karPath());
+
+#ifndef HANDYKARAOKE_ENABLE_HNK
+    ui->label_22->setText(tr("HNK (ยังไม่เปิดใช้) :"));
+    ui->leHNKPath->setEnabled(false);
+    ui->btnHNKPath->setEnabled(false);
+    ui->leHNKPath->setToolTip(
+                tr("HNK เป็นความสามารถเสริมและยังไม่ได้เปิดใช้ในรุ่นนี้."));
+#endif
     ui->lbCountSongsValue->setText(QString::number(db->count()) + " เพลง");
 
     if (db->isRunning())
