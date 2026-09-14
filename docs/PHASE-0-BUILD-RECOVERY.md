@@ -7,14 +7,16 @@ The baseline is commit `dd0eaa1` (3.0.0-alpha), inherited from the original proj
 
 ## Current blockers
 
-1. The qmake project references files that are absent from this repository:
+1. The public snapshot is missing the HNK reader files:
 
    - `Midi/HNKFile.cpp`
    - `Midi/HNKFile.h`
    - `Midi/HNKFileComp.h`
 
-   These files are needed by the HNK import/playback path.  Therefore a full build
-   cannot succeed from the public source as it stands.
+   HNK is now an explicit optional capability and is disabled by default. The
+   default recovery build must not index or play HNK files; enabling it requires
+   all three files and a documented legal/compatibility decision. See
+   [HNK option](HNK-OPTION.md).
 
 2. Linux releases depend on an old `librtmidi.so.4` and have reported startup
    failures on current distributions.
