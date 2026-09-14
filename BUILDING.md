@@ -1,8 +1,8 @@
 # Building HandyKaraoke (Recovery Build)
 
-> Status: the public source snapshot is incomplete. CMake deliberately stops
-> before compilation while the HNK reader files are missing. This is expected
-> and prevents a misleading partial release.
+> Status: HNK support is disabled by default while its reader source is absent.
+> This lets the recovery build proceed for MID/KAR/NCN without claiming HNK
+> compatibility.
 
 ## Supported recovery target
 
@@ -34,25 +34,31 @@ Adjust `CMAKE_PREFIX_PATH` to your installed Qt kit. An MSVC 2019-built Qt
 kit is normally usable with the MSVC 2022 toolset, but use a matching Qt/MSVC
 kit when available.
 
-## Expected result today
+## HNK option
 
-Configuration stops with the names of these required missing files:
+The default is:
 
-- `Midi/HNKFile.cpp`
-- `Midi/HNKFile.h`
-- `Midi/HNKFileComp.h`
+```text
+HK_ENABLE_HNK=OFF
+```
 
-Do **not** bypass that check for a release. The application contains direct
-HNK reader calls and needs a deliberate compatibility decision first. See
-`docs/WORK-QUEUE.md`.
+This means HNK files are not indexed or played, and the Settings dialog marks
+their path as unavailable. To enable the option later:
 
-## After the HNK decision
+```powershell
+cmake -S . -B build\msvc-x64 -G Ninja -DHK_ENABLE_HNK=ON
+```
 
-1. Restore authorised source or explicitly remove/feature-gate HNK code.
-2. Re-run configure and fix the first actual compiler error.
-3. Build a Debug binary, then run the smoke tests in
-   `docs/PHASE-0-BUILD-RECOVERY.md`.
-4. Only then add CI and the installer packaging step.
+That configuration intentionally fails until all authorised HNK source files
+are present. See [HNK option](docs/HNK-OPTION.md).
+
+## First verification
+
+1. Configure and build with HNK left disabled.
+2. Launch with an empty configuration and no MIDI output device.
+3. Create and reopen the SQLite song database.
+4. Scan only legally redistributable MID/KAR/NCN test fixtures.
+5. Record every compiler, DLL-deployment, or runtime failure in the work queue.
 
 ## Clean build
 
