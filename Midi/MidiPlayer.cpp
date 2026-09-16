@@ -205,31 +205,49 @@ int MidiPlayer::beatCount()
 
 bool MidiPlayer::setMidiOut(int portNumber)
 {
-    if (portNumber != -1 && portNumber >= midiDevices().size())
+    const int deviceCount = midiDevices().size();
+    if (portNumber < -1 || portNumber >= deviceCount)
         return false;
 
     if (!isPlayerStopped())
         stop(true);
 
-    int oldPort = _midiPortNum;
+    const int oldPort = _midiPortNum;
     bool result = false;
 
     if (portNumber == -1) {
-        _midiSynth->open();
-        _midiSynth->setVolume(_volume / 100.0f);
-        _midiPortNum = -1;
-        result = true;
+        result = _midiSynth->open();
+        if (result) {
+            _midiSynth->setVolume(_volume / 100.0f);
+            _midiPortNum = -1;
+        }
     } else {
-        MidiOut *out = _midiOuts[portNumber];
+        MidiOut *out = _midiOuts.value(portNumber, nullptr);
         if (!out) {
             out = new MidiOut();
-            out->openPort(portNumber);
-            _midiOuts[portNumber] = out;
+            try {
+                out->openPort(portNumber);
+            } catch (const RtMidiError &) {
+                delete out;
+                return false;
+            }
+
+            if (!out->isPortOpen()) {
+                delete out;
+                return false;
+            }
+
+            _midiOuts.insert(portNumber, out);
         }
+
         out->setVolume(_volume / 100.0f);
         result = out->isPortOpen();
-        _midiPortNum = result ? portNumber : _midiPortNum;
+        if (result)
+            _midiPortNum = portNumber;
     }
+
+    if (!result)
+        return false;
 
     for (int i=0; i<16; i++) {
         if (_midiChannels[i].port() != oldPort)
@@ -239,18 +257,17 @@ bool MidiPlayer::setMidiOut(int portNumber)
 
     calculateUsedPort();
 
-    return result;
+    return true;
 }
 
 bool MidiPlayer::setMidiIn(int portNumber)
 {
-    if (portNumber != -1 && portNumber >= midiInDevices().size())
+    const int deviceCount = midiInDevices().size();
+    if (portNumber < -1 || portNumber >= deviceCount)
         return false;
 
     if (portNumber == _midiPortInNum)
         return true;
-
-    _midiPortInNum = portNumber;
 
     if (portNumber == -1) {
         if (_midiIn != nullptr) {
@@ -258,17 +275,28 @@ bool MidiPlayer::setMidiIn(int portNumber)
             delete _midiIn;
             _midiIn = nullptr;
         }
-    } else {
-        if (_midiIn == nullptr) {
-            _midiIn = new RtMidiIn();
-            _midiIn->openPort(portNumber);
-            _midiIn->setCallback(&midiIncallback, this);
-        } else {
-            _midiIn->closePort();
-            _midiIn->openPort(portNumber);
-        }
+        _midiPortInNum = -1;
+        return true;
     }
 
+    RtMidiIn *in = _midiIn;
+    if (in == nullptr)
+        in = new RtMidiIn();
+    else
+        in->closePort();
+
+    try {
+        in->openPort(portNumber);
+        in->setCallback(&midiIncallback, this);
+    } catch (const RtMidiError &) {
+        delete in;
+        _midiIn = nullptr;
+        _midiPortInNum = -1;
+        return false;
+    }
+
+    _midiIn = in;
+    _midiPortInNum = portNumber;
     return true;
 }
 
