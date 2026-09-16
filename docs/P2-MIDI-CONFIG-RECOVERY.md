@@ -57,6 +57,28 @@ This is the appropriate test while no external MIDI controller is available.
 Do not share SoundFont or song files in the repository unless their
 redistribution licence permits it.
 
+## Recovery without editing configuration files
+
+The staged runtime includes two double-click launchers beside
+`HandyKaraoke.exe`:
+
+- `HandyKaraoke-SafeMode.cmd` starts with temporary default settings and
+  skips VST loading. It does **not** change the normal configuration.
+- `HandyKaraoke-ResetSettings.cmd` moves `HandyKaraoke.conf` and
+  `SynthMixer.conf` to a timestamped `backup-*` folder, then exits. It keeps
+  the song database and song files.
+
+The equivalent commands are:
+
+~~~bat
+HandyKaraoke.exe --safe-mode
+HandyKaraoke.exe --reset-settings
+~~~
+
+Use Safe Mode first to confirm that a saved setting or VST configuration is
+the problem. Use Reset Settings only when the normal configuration should be
+discarded.
+
 ## Hardware test (deferred)
 
 When a USB MIDI device becomes available, select it, exit the application,
