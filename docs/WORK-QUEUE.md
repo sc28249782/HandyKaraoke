@@ -61,10 +61,13 @@ song, SoundFont, and VST locations ready for smoke testing.
 
 ## P2 — MIDI configuration resilience
 
-- [ ] Bounds-check persisted MIDI device selections.
-- [ ] Fall back safely when a device is missing or reordered.
+- [x] Bounds-check persisted MIDI device selections, including per-channel
+      mappings.
+- [x] Persist MIDI output, input, and per-channel mappings by device name;
+      safely fall back to SoundFont/None if a name cannot be resolved.
 - [ ] Add a reset-settings/safe-mode entry point.
-- [ ] Test startup with no device and stale settings.
+- [ ] Build and test startup with no MIDI device and deliberately stale settings.
+- [ ] Test reconnecting/reordering a real MIDI device when hardware is available.
 
 **Done when:** stale MIDI settings cannot prevent the application from starting.
 
