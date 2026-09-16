@@ -146,9 +146,13 @@ if(WIN32)
         "${HK_BASS_ROOT}/bass_vst24/x64/bass_vst.dll"
         "${HK_WINSPARKLE_ROOT}/x64/WinSparkle.dll"
     )
-    foreach(runtime_dll IN LISTS HK_RUNTIME_DLLS)
-        if(NOT EXISTS "${runtime_dll}")
-            message(FATAL_ERROR "Missing runtime DLL: ${runtime_dll}")
+    set(HK_RUNTIME_SUPPORT_FILES
+        "${CMAKE_CURRENT_SOURCE_DIR}/Style.ini"
+        "${CMAKE_CURRENT_SOURCE_DIR}/languages/en.qm"
+    )
+    foreach(runtime_file IN LISTS HK_RUNTIME_DLLS HK_RUNTIME_SUPPORT_FILES)
+        if(NOT EXISTS "${runtime_file}")
+            message(FATAL_ERROR "Missing runtime file: ${runtime_file}")
         endif()
     endforeach()
 
@@ -159,8 +163,14 @@ if(WIN32)
                 "$<TARGET_FILE:HandyKaraoke>"
         COMMAND "${CMAKE_COMMAND}" -E copy_if_different
                 ${HK_RUNTIME_DLLS}
+                "${CMAKE_CURRENT_SOURCE_DIR}/Style.ini"
                 "$<TARGET_FILE_DIR:HandyKaraoke>"
-        COMMENT "Deploying Qt and legacy audio runtime DLLs"
+        COMMAND "${CMAKE_COMMAND}" -E make_directory
+                "$<TARGET_FILE_DIR:HandyKaraoke>/languages"
+        COMMAND "${CMAKE_COMMAND}" -E copy_if_different
+                "${CMAKE_CURRENT_SOURCE_DIR}/languages/en.qm"
+                "$<TARGET_FILE_DIR:HandyKaraoke>/languages/en.qm"
+        COMMENT "Deploying Qt, legacy audio, and application runtime files"
         VERBATIM)
 endif()
 
