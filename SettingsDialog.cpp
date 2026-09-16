@@ -16,6 +16,11 @@
 #include "Dialogs/Chorus2Dialog.h"
 #include "Dialogs/Reverb2Dialog.h"
 
+namespace {
+const QString kMidiSynthesizerSetting = "__HANDYKARAOKE_SOUNDFONT__";
+const QString kNoMidiInputSetting = "__HANDYKARAOKE_NO_MIDI_INPUT__";
+}
+
 SettingsDialog::SettingsDialog(QWidget *parent, MainWindow *m) :
     QDialog(parent),
     ui(new Ui::SettingsDialog)
@@ -572,25 +577,60 @@ void SettingsDialog::on_cbMidiOut_activated(int index)
 {
     mainWin->stop();
 
-    if (index == (ui->cbMidiOut->count() - 1)) {
-        settings->setValue("MidiOut", -1);
-        mainWin->midiPlayer()->setMidiOut(-1);
-    } else {
-        settings->setValue("MidiOut", index);
-        mainWin->midiPlayer()->setMidiOut(index);
+    const int port = (index == (ui->cbMidiOut->count() - 1)) ? -1 : index;
+    MidiPlayer *player = mainWin->midiPlayer();
+    if (!player->setMidiOut(port)) {
+        const QString title = tr("ไม่สามารถใช้อุปกรณ์ MIDI ที่เลือกได้");
+        const QString msg = tr("อุปกรณ์ MIDI อาจถูกถอดออกหรือกำลังถูกใช้งานอยู่ "
+                               "โปรแกรมจะคงค่าเดิมไว้");
+        QMessageBox::warning(this, title, msg, QMessageBox::Ok);
+
+        const int activePort = player->midiOutPortNumber();
+        ui->cbMidiOut->setCurrentIndex(activePort == -1
+                                       ? ui->cbMidiOut->count() - 1
+                                       : activePort);
+        return;
     }
 
+    const QStringList devices = MidiPlayer::midiDevices();
+    settings->setValue("MidiOut", player->midiOutPortNumber());
+    settings->setValue("MidiOutName",
+                       player->midiOutPortNumber() == -1
+                       ? kMidiSynthesizerSetting
+                       : devices.value(player->midiOutPortNumber()));
+
     QList<int> ports;
+    QStringList portNames;
     for (int i=0; i<16; i++) {
-        ports.append(mainWin->midiPlayer()->midiChannel()[i].port());
+        const int channelPort = player->midiChannel()[i].port();
+        ports.append(channelPort);
+        portNames.append(channelPort == -1
+                         ? kMidiSynthesizerSetting
+                         : devices.value(channelPort));
     }
     settings->setValue("MidiChannelMapper", QVariant::fromValue(ports));
+    settings->setValue("MidiChannelMapperNames", portNames);
 }
 
 void SettingsDialog::on_cbMidiIn_activated(int index)
 {
-    mainWin->midiPlayer()->setMidiIn(index-1);
-    settings->setValue("MidiIn", index-1);
+    const int port = index - 1;
+    MidiPlayer *player = mainWin->midiPlayer();
+    if (!player->setMidiIn(port)) {
+        const QString title = tr("ไม่สามารถใช้อุปกรณ์ MIDI ที่เลือกได้");
+        const QString msg = tr("อุปกรณ์ MIDI อาจถูกถอดออกหรือกำลังถูกใช้งานอยู่ "
+                               "โปรแกรมจะใช้ None แทน");
+        QMessageBox::warning(this, title, msg, QMessageBox::Ok);
+        player->setMidiIn(-1);
+    }
+
+    const QStringList devices = MidiPlayer::midiInDevices();
+    settings->setValue("MidiIn", player->midiInPortNumber());
+    settings->setValue("MidiInName",
+                       player->midiInPortNumber() == -1
+                       ? kNoMidiInputSetting
+                       : devices.value(player->midiInPortNumber()));
+    ui->cbMidiIn->setCurrentIndex(player->midiInPortNumber() + 1);
 }
 
 void SettingsDialog::on_cbAudioOut_activated(int index)
