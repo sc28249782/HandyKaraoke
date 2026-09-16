@@ -29,8 +29,14 @@ the optional path has a documented compatibility decision.
       command in `BUILDING.md`.
 - [x] Feature-gate HNK code so the default build does not require missing
       source files.
-- [ ] Run the first real clean-checkout configure and compilation.
-- [ ] Resolve the compiler and runtime findings from that build.
+- [x] Run the first real Windows 11 x64 configure and compilation
+      (2026-09-16, VS 2022 + Qt 5.15.2 MSVC 2019 x64).
+- [x] Resolve the initial compiler and launch blockers: bundled RtMidi include
+      path, QPainterPath include, ANSI/Unicode WinMM device names, debug
+      deployment, VSTi metadata initialization, and English translation assets.
+- [x] Launch the deployed Debug build and switch Thai/English successfully.
+- [ ] Smoke-test startup with no MIDI device, SQLite database creation, and
+      legally redistributable MID/KAR/NCN fixtures.
 - [ ] Migrate to Qt 6 only after a verified Qt 5.15 recovery build.
 
 **Done when:** a clean Windows 11 environment builds the application from the
