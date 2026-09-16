@@ -34,6 +34,11 @@ Adjust `CMAKE_PREFIX_PATH` to your installed Qt kit. An MSVC 2019-built Qt
 kit is normally usable with the MSVC 2022 toolset, but use a matching Qt/MSVC
 kit when available.
 
+A successful build deploys the required Qt plug-ins, legacy BASS/WinSparkle
+DLLs, `Style.ini`, and `languages/en.qm` beside the executable. Close
+`HandyKaraoke.exe` before building again; Windows cannot relink an executable
+that is still running.
+
 ## HNK option
 
 The default is:
