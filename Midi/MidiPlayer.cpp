@@ -616,7 +616,11 @@ void MidiPlayer::setLockBass(bool lock, int number)
 
 void MidiPlayer::setMapChannelOutput(int ch, int port)
 {
-    if (port != -1 && port >= midiDevices().size())
+    if (ch < 0 || ch >= 16)
+        return;
+
+    const int deviceCount = midiDevices().size();
+    if (port < -1 || port >= deviceCount)
         return;
 
     if (port == _midiChannels[ch].port())
@@ -639,12 +643,23 @@ void MidiPlayer::setMapChannelOutput(int ch, int port)
     }
     else
     {
-        MidiOut *out = _midiOuts[port];
+        MidiOut *out = _midiOuts.value(port, nullptr);
         if (!out) {
             out = new MidiOut();
-            out->openPort(port);
+            try {
+                out->openPort(port);
+            } catch (const RtMidiError &) {
+                delete out;
+                return;
+            }
+
+            if (!out->isPortOpen()) {
+                delete out;
+                return;
+            }
+
             out->setVolume(_volume / 100.0f);
-            _midiOuts[port] = out;
+            _midiOuts.insert(port, out);
         }
 
         if (!this->isPlayerStopped()) {
