@@ -146,8 +146,13 @@ if(WIN32)
         "${HK_BASS_ROOT}/bass_vst24/x64/bass_vst.dll"
         "${HK_WINSPARKLE_ROOT}/x64/WinSparkle.dll"
     )
-    set(HK_RUNTIME_SUPPORT_FILES
+    set(HK_RUNTIME_ROOT_FILES
         "${CMAKE_CURRENT_SOURCE_DIR}/Style.ini"
+        "${CMAKE_CURRENT_SOURCE_DIR}/HandyKaraoke-SafeMode.cmd"
+        "${CMAKE_CURRENT_SOURCE_DIR}/HandyKaraoke-ResetSettings.cmd"
+    )
+    set(HK_RUNTIME_SUPPORT_FILES
+        ${HK_RUNTIME_ROOT_FILES}
         "${CMAKE_CURRENT_SOURCE_DIR}/languages/en.qm"
     )
     foreach(runtime_file IN LISTS HK_RUNTIME_DLLS HK_RUNTIME_SUPPORT_FILES)
@@ -163,7 +168,7 @@ if(WIN32)
                 "$<TARGET_FILE:HandyKaraoke>"
         COMMAND "${CMAKE_COMMAND}" -E copy_if_different
                 ${HK_RUNTIME_DLLS}
-                "${CMAKE_CURRENT_SOURCE_DIR}/Style.ini"
+                ${HK_RUNTIME_ROOT_FILES}
                 "$<TARGET_FILE_DIR:HandyKaraoke>"
         COMMAND "${CMAKE_COMMAND}" -E make_directory
                 "$<TARGET_FILE_DIR:HandyKaraoke>/languages"
@@ -189,7 +194,7 @@ if(WIN32)
                 "$<TARGET_FILE:HandyKaraoke>"
         COMMAND "${CMAKE_COMMAND}" -E copy_if_different
                 ${HK_RUNTIME_DLLS}
-                "${CMAKE_CURRENT_SOURCE_DIR}/Style.ini"
+                ${HK_RUNTIME_ROOT_FILES}
                 "${HK_STAGE_DIR}"
         COMMAND "${CMAKE_COMMAND}" -E make_directory "${HK_STAGE_DIR}/languages"
         COMMAND "${CMAKE_COMMAND}" -E copy_if_different
