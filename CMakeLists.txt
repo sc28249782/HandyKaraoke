@@ -122,6 +122,46 @@ if(WIN32)
     if(HK_QT_MAJOR_VERSION STREQUAL "5")
         target_link_libraries(HandyKaraoke PRIVATE Qt5::WinExtras)
     endif()
+
+    # Linking verifies import libraries only.  Put every runtime DLL beside the
+    # executable so that a freshly built recovery target can be launched.
+    get_target_property(HK_QMAKE_EXECUTABLE
+        Qt${HK_QT_MAJOR_VERSION}::qmake IMPORTED_LOCATION)
+    get_filename_component(HK_QT_BIN_DIR "${HK_QMAKE_EXECUTABLE}" DIRECTORY)
+    find_program(HK_WINDEPLOYQT_EXECUTABLE
+        NAMES windeployqt.exe windeployqt
+        HINTS "${HK_QT_BIN_DIR}"
+        NO_DEFAULT_PATH)
+    if(NOT HK_WINDEPLOYQT_EXECUTABLE)
+        message(FATAL_ERROR
+            "windeployqt was not found beside ${HK_QMAKE_EXECUTABLE}. "
+            "Install a complete Qt desktop kit.")
+    endif()
+
+    set(HK_RUNTIME_DLLS
+        "${HK_BASS_ROOT}/bass24/x64/bass.dll"
+        "${HK_BASS_ROOT}/bassmidi24/x64/bassmidi.dll"
+        "${HK_BASS_ROOT}/bass_fx24/x64/bass_fx.dll"
+        "${HK_BASS_ROOT}/bassmix24/x64/bassmix.dll"
+        "${HK_BASS_ROOT}/bass_vst24/x64/bass_vst.dll"
+        "${HK_WINSPARKLE_ROOT}/x64/WinSparkle.dll"
+    )
+    foreach(runtime_dll IN LISTS HK_RUNTIME_DLLS)
+        if(NOT EXISTS "${runtime_dll}")
+            message(FATAL_ERROR "Missing runtime DLL: ${runtime_dll}")
+        endif()
+    endforeach()
+
+    add_custom_command(TARGET HandyKaraoke POST_BUILD
+        COMMAND "${HK_WINDEPLOYQT_EXECUTABLE}"
+                --no-translations
+                --dir "$<TARGET_FILE_DIR:HandyKaraoke>"
+                "$<TARGET_FILE:HandyKaraoke>"
+        COMMAND "${CMAKE_COMMAND}" -E copy_if_different
+                ${HK_RUNTIME_DLLS}
+                "$<TARGET_FILE_DIR:HandyKaraoke>"
+        COMMENT "Deploying Qt and legacy audio runtime DLLs"
+        VERBATIM)
 endif()
 
 # Qt 6 support is an explicit migration goal. A successful Qt 5 recovery build
