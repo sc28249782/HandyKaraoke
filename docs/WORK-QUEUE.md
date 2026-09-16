@@ -49,7 +49,10 @@ documented instructions.
 - [x] Add the `stage-runtime` CMake target, which creates a release-like
       runtime layout without copying user media.
 - [ ] Generate a Release-stage folder and verify its runtime manifest.
-- [ ] Launch from the staged folder and smoke-test MIDI/SoundFont there.
+- [x] Manually verify NCN/MIDI playback and SoundFont synthesis (maintainer
+      test, 2026-09-16).
+- [ ] Confirm the same smoke test is launched from the staged folder and record
+      its runtime manifest.
 - [ ] Build or deliberately replace the legacy VST checker before enabling
       VST scanning in a staged release.
 
