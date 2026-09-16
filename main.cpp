@@ -1,6 +1,8 @@
 #include "MainWindow.h"
 
 #include <QApplication>
+#include <QCommandLineParser>
+#include <QMessageBox>
 #include <QSplashScreen>
 #include <QDirIterator>
 #include <QMetaType>
@@ -34,6 +36,23 @@ int main(int argc, char *argv[])
     QCoreApplication::setOrganizationName(VER_COMPANYNAME_STR);
     QCoreApplication::setOrganizationDomain(VER_COMPANYDOMAIN_STR);
 
+    QCommandLineParser parser;
+    parser.setApplicationDescription(
+                "HandyKaraoke recovery and troubleshooting options");
+    parser.addHelpOption();
+    const QCommandLineOption safeModeOption(
+                "safe-mode",
+                "Start with temporary default settings and skip VST loading.");
+    const QCommandLineOption resetSettingsOption(
+                "reset-settings",
+                "Back up and reset HandyKaraoke settings, then exit.");
+    parser.addOption(safeModeOption);
+    parser.addOption(resetSettingsOption);
+    parser.process(a);
+
+    const bool safeMode = parser.isSet(safeModeOption);
+    const bool resetSettings = parser.isSet(resetSettingsOption);
+
     registerMetaType();
 
     QPixmap *pixmap = new QPixmap(":/Icons/App/splash.png");
@@ -60,6 +79,29 @@ int main(int argc, char *argv[])
             dir.mkpath(Config::CONFIG_DIR_PATH);
     }
 
+    if (resetSettings) {
+        QString backupDirectory;
+        QString errorMessage;
+        if (!Config::resetSettings(&backupDirectory, &errorMessage)) {
+            QMessageBox::critical(nullptr, "HandyKaraoke",
+                                  "ไม่สามารถรีเซ็ตการตั้งค่าได้\n" + errorMessage);
+            return 1;
+        }
+
+        const QString message = backupDirectory.isEmpty()
+                ? "ไม่พบการตั้งค่าเดิมให้รีเซ็ต"
+                : "รีเซ็ตการตั้งค่าแล้ว\nสำรองไฟล์เดิมไว้ที่\n" + backupDirectory;
+        QMessageBox::information(nullptr, "HandyKaraoke", message);
+        return 0;
+    }
+
+    if (safeMode) {
+        Config::enableSafeMode();
+        splash->showMessage("Safe mode: ใช้ค่าเริ่มต้นชั่วคราว",
+                            Qt::AlignBottom|Qt::AlignRight);
+        qApp->processEvents();
+    }
+
     { // set style
         QSettings *s = new QSettings("Style.ini", QSettings::IniFormat);
 
@@ -84,14 +126,18 @@ int main(int argc, char *argv[])
 
     MainWindow w;
     w.setWindowIcon(QIcon(":/Icons/App/icon.png"));
+    if (safeMode)
+        w.setWindowTitle(w.windowTitle() + " [Safe Mode]");
 
     checkDatabase(splash, w.database());
     loadSoundfonts(splash, w.midiPlayer()->midiSynthesizer());
 
     #ifndef __linux__
-    loadVSTi(splash, w.midiPlayer()->midiSynthesizer());
-    makeVSTList(splash, w.midiPlayer()->midiSynthesizer());
-    w.synthMixerDialog()->setVSTVendorMenu();
+    if (!safeMode) {
+        loadVSTi(splash, w.midiPlayer()->midiSynthesizer());
+        makeVSTList(splash, w.midiPlayer()->midiSynthesizer());
+        w.synthMixerDialog()->setVSTVendorMenu();
+    }
     #endif
     w.synthMixerDialog()->setFXToSynth();
 
