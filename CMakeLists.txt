@@ -49,6 +49,8 @@ include(cmake/HandyDependencies.cmake)
 
 file(GLOB HK_ROOT_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp")
 file(GLOB HK_MIDI_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/Midi/*.cpp")
+# The legacy qmake project does not compile archival backup sources.
+list(FILTER HK_MIDI_SOURCES EXCLUDE REGEX ".*/Midi/_BK_.*\\.cpp$")
 if(NOT HK_ENABLE_HNK)
     # Keep a future restored reader out of the default compatibility build.
     list(FILTER HK_MIDI_SOURCES EXCLUDE REGEX ".*/Midi/HNKFile\\.cpp$")
@@ -93,6 +95,7 @@ target_include_directories(HandyKaraoke PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}"
     "${CMAKE_CURRENT_SOURCE_DIR}/Widgets"
     "${CMAKE_CURRENT_SOURCE_DIR}/Midi"
+    "${CMAKE_CURRENT_SOURCE_DIR}/Midi/rtmidi"
 )
 
 if(HK_ENABLE_HNK)
