@@ -42,6 +42,20 @@ the optional path has a documented compatibility decision.
 **Done when:** a clean Windows 11 environment builds the application from the
 documented instructions.
 
+## P1b — Runtime staging baseline
+
+- [x] Record the HandyKaraoke 2.4.1 installed-folder layout and release history
+      as a compatibility reference.
+- [x] Add the `stage-runtime` CMake target, which creates a release-like
+      runtime layout without copying user media.
+- [ ] Generate a Release-stage folder and verify its runtime manifest.
+- [ ] Launch from the staged folder and smoke-test MIDI/SoundFont there.
+- [ ] Build or deliberately replace the legacy VST checker before enabling
+      VST scanning in a staged release.
+
+**Done when:** a fresh staged folder has the supported runtime files and empty
+song, SoundFont, and VST locations ready for smoke testing.
+
 ## P2 — MIDI configuration resilience
 
 - [ ] Bounds-check persisted MIDI device selections.
