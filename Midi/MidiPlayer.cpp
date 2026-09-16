@@ -48,7 +48,11 @@ QStringList MidiPlayer::midiDevices()
         MIDIOUTCAPS outCaps;
         if (midiOutGetDevCaps(i, &outCaps, sizeof(MIDIOUTCAPS))  != MMSYSERR_NOERROR)
             continue;
-        outName.append(QString::fromStdWString(outCaps.szPname));
+#ifdef UNICODE
+        outName.append(QString::fromWCharArray(outCaps.szPname));
+#else
+        outName.append(QString::fromLocal8Bit(outCaps.szPname));
+#endif
     }
     #else
     MidiOut o;
@@ -71,7 +75,11 @@ QStringList MidiPlayer::midiInDevices()
         MIDIINCAPS inCaps;
         if (midiInGetDevCaps(i, &inCaps, sizeof(MIDIINCAPS))  != MMSYSERR_NOERROR)
             continue;
-        inName.append(QString::fromStdWString(inCaps.szPname));
+#ifdef UNICODE
+        inName.append(QString::fromWCharArray(inCaps.szPname));
+#else
+        inName.append(QString::fromLocal8Bit(inCaps.szPname));
+#endif
     }
     #else
     RtMidiIn in;
