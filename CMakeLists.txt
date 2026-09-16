@@ -172,6 +172,39 @@ if(WIN32)
                 "$<TARGET_FILE_DIR:HandyKaraoke>/languages/en.qm"
         COMMENT "Deploying Qt, legacy audio, and application runtime files"
         VERBATIM)
+
+    # Create a disposable, release-like layout without copying user media or
+    # touching a real installation.  This is the only location P1 smoke tests
+    # should use once it has been staged.
+    set(HK_STAGE_DIR "${CMAKE_BINARY_DIR}/stage/HandyKaraoke" CACHE PATH
+        "Destination directory for the P1 runtime staging target")
+    add_custom_target(stage-runtime
+        COMMAND "${CMAKE_COMMAND}" -E make_directory "${HK_STAGE_DIR}"
+        COMMAND "${CMAKE_COMMAND}" -E copy_if_different
+                "$<TARGET_FILE:HandyKaraoke>"
+                "${HK_STAGE_DIR}"
+        COMMAND "${HK_WINDEPLOYQT_EXECUTABLE}"
+                --no-translations
+                --dir "${HK_STAGE_DIR}"
+                "$<TARGET_FILE:HandyKaraoke>"
+        COMMAND "${CMAKE_COMMAND}" -E copy_if_different
+                ${HK_RUNTIME_DLLS}
+                "${CMAKE_CURRENT_SOURCE_DIR}/Style.ini"
+                "${HK_STAGE_DIR}"
+        COMMAND "${CMAKE_COMMAND}" -E make_directory "${HK_STAGE_DIR}/languages"
+        COMMAND "${CMAKE_COMMAND}" -E copy_if_different
+                "${CMAKE_CURRENT_SOURCE_DIR}/languages/en.qm"
+                "${HK_STAGE_DIR}/languages/en.qm"
+        COMMAND "${CMAKE_COMMAND}" -E make_directory "${HK_STAGE_DIR}/Songs/KAR"
+        COMMAND "${CMAKE_COMMAND}" -E make_directory "${HK_STAGE_DIR}/Songs/NCN/Song"
+        COMMAND "${CMAKE_COMMAND}" -E make_directory "${HK_STAGE_DIR}/Songs/NCN/Lyrics"
+        COMMAND "${CMAKE_COMMAND}" -E make_directory "${HK_STAGE_DIR}/Songs/NCN/Cursor"
+        COMMAND "${CMAKE_COMMAND}" -E make_directory "${HK_STAGE_DIR}/Songs/HNK"
+        COMMAND "${CMAKE_COMMAND}" -E make_directory "${HK_STAGE_DIR}/SoundFonts"
+        COMMAND "${CMAKE_COMMAND}" -E make_directory "${HK_STAGE_DIR}/VST"
+        DEPENDS HandyKaraoke
+        COMMENT "Staging a clean HandyKaraoke runtime layout"
+        VERBATIM)
 endif()
 
 # Qt 6 support is an explicit migration goal. A successful Qt 5 recovery build
