@@ -31,9 +31,9 @@ void Config::initConfigDataPath()
 
 void Config::enableSafeMode()
 {
-    QDir dir(TEMP_DIR_PATH + "/safe-mode");
-    if (!dir.exists())
-        dir.mkpath(".");
+    const QString safeDirectory = TEMP_DIR_PATH + "/safe-mode";
+    QDir().mkpath(safeDirectory);
+    QDir dir(safeDirectory);
 
     CONFIG_APP_FILE_PATH = dir.filePath("HandyKaraoke.conf");
     CONFIG_SYNTH_FILE_PATH = dir.filePath("SynthMixer.conf");
@@ -47,7 +47,7 @@ void Config::enableSafeMode()
 bool Config::resetSettings(QString *backupDirectory, QString *errorMessage)
 {
     QDir configDir(CONFIG_DIR_PATH);
-    if (!configDir.exists() && !configDir.mkpath(".")) {
+    if (!configDir.exists() && !QDir().mkpath(CONFIG_DIR_PATH)) {
         if (errorMessage)
             *errorMessage = QString("Cannot create configuration directory: %1")
                     .arg(CONFIG_DIR_PATH);
