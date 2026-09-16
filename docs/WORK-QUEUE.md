@@ -66,7 +66,8 @@ song, SoundFont, and VST locations ready for smoke testing.
 - [x] Persist MIDI output, input, and per-channel mappings by device name;
       safely fall back to SoundFont/None if a name cannot be resolved.
 - [ ] Add a reset-settings/safe-mode entry point.
-- [ ] Build and test startup with no MIDI device and deliberately stale settings.
+- [x] Build and test startup with no MIDI device and deliberately stale settings
+      (Windows x64 maintainer test, 2026-09-16).
 - [ ] Test reconnecting/reordering a real MIDI device when hardware is available.
 
 **Done when:** stale MIDI settings cannot prevent the application from starting.
