@@ -48,7 +48,7 @@ MidiSynthesizer::MidiSynthesizer(QObject *parent) : QObject(parent)
     }
 
     #ifndef __linux__
-    BASS_VST_INFO vstinfo;
+    BASS_VST_INFO vstinfo = {};
     for (int i=0; i<4; i++)
     {
         mVstiFiles[i] = "";
