@@ -1719,6 +1719,7 @@ void MainWindow::setThaiLang()
         return;
 
     if (QApplication::removeTranslator(&translator)) {
+        ui->retranslateUi(this);
         QApplication::processEvents();
         currentLang = "th";
         settings->setValue("Language", currentLang);
@@ -1734,6 +1735,7 @@ void MainWindow::setEngLang()
 
     if (translator.load(path)) {
         QApplication::installTranslator(&translator);
+        ui->retranslateUi(this);
         QApplication::processEvents();
         currentLang = "en";
         settings->setValue("Language", currentLang);
