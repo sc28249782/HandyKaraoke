@@ -4,6 +4,7 @@ param(
     [string]$StageDir,
     [string]$OutputDir,
     [string]$Version = '3.0.0-alpha-recovery',
+    [string]$IsccPath,
     [switch]$SkipStage
 )
 
@@ -15,6 +16,13 @@ if (-not $OutputDir) { $OutputDir = Join-Path $BuildDir 'package' }
 $issScript = Join-Path $repositoryRoot '_iss_setup\handykaraoke-stage-x64.iss'
 
 function Find-Iscc {
+    if ($IsccPath) {
+        if (Test-Path -LiteralPath $IsccPath -PathType Leaf) {
+            return (Resolve-Path -LiteralPath $IsccPath).Path
+        }
+        throw "The requested ISCC.exe was not found: $IsccPath"
+    }
+
     $command = Get-Command ISCC.exe -ErrorAction SilentlyContinue
     if ($command) { return $command.Source }
     $candidates = @(
