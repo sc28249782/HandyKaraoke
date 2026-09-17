@@ -3,6 +3,7 @@
 #include "MidiHelper.h"
 
 #include <cstdlib>
+#include <QSet>
 
 // ========================================================
 bool isGreaterThan(MidiEvent* e1, MidiEvent* e2)
@@ -70,6 +71,7 @@ void MidiFile::clear()
     fEvents.clear();
     fTempoEvents.clear();
     fLyricsEvents.clear();
+    fTextEvents.clear();
     fControllerEvents.clear();
     fProgramChangeEvents.clear();
     fTimeSignatureEvents.clear();
@@ -268,17 +270,58 @@ bool MidiFile::read(QFile *in, bool seekFileChunkID)
     qStableSort(fEvents.begin(), fEvents.end(), isGreaterThan);
     qStableSort(fTempoEvents.begin(), fTempoEvents.end(), isGreaterThan);
     qStableSort(fLyricsEvents.begin(), fLyricsEvents.end(), isGreaterThan);
+    qStableSort(fTextEvents.begin(), fTextEvents.end(), isGreaterThan);
     qStableSort(fControllerEvents.begin(), fControllerEvents.end(), isGreaterThan);
     qStableSort(fProgramChangeEvents.begin(), fProgramChangeEvents.end(), isGreaterThan);
     qStableSort(fTimeSignatureEvents.begin(), fTimeSignatureEvents.end(), isGreaterThan);
 
     in->close();
 
-    for (auto e : fLyricsEvents) {
-        QString lyr = e->data();
-        for (auto chr : lyr)
-            fLyricscursor.append(e->tick());
-        fLyrics += lyr;
+    // Standard MIDI lyrics use FF 05.  KARA files also commonly put the
+    // syllables in FF 01 text events on a track named Words or Lyrics.
+    if (!fLyricsEvents.isEmpty()) {
+        for (auto e : fLyricsEvents) {
+            QString lyr = e->data();
+            for (auto chr : lyr)
+                fLyricscursor.append(e->tick());
+            fLyrics += lyr;
+        }
+    } else {
+        QSet<int> karaokeTextTracks;
+        for (MidiEvent *e : fEvents) {
+            if (e->metaEventType() != MidiMetaType::SequenceTrackName)
+                continue;
+
+            const QString trackName = QString::fromLatin1(e->data()).trimmed();
+            if (trackName.compare("Words", Qt::CaseInsensitive) == 0 ||
+                trackName.compare("Lyrics", Qt::CaseInsensitive) == 0) {
+                karaokeTextTracks.insert(e->track());
+            }
+        }
+
+        for (MidiEvent *e : fTextEvents) {
+            if (!karaokeTextTracks.contains(e->track()))
+                continue;
+
+            const QString text = QString::fromLocal8Bit(e->data());
+            if (text.startsWith('@'))
+                continue; // KARA metadata such as @T title and @I information.
+
+            for (const QChar chr : text) {
+                if (chr == QLatin1Char('\\\\') || chr == QLatin1Char('/')) {
+                    // KARA line markers consume one cursor position, just as a
+                    // newline does in LyricsWidget.
+                    if (!fLyrics.isEmpty() && !fLyrics.endsWith(QLatin1Char('\n'))) {
+                        fLyrics.append(QLatin1Char('\n'));
+                        fLyricscursor.append(e->tick());
+                    }
+                    continue;
+                }
+
+                fLyrics.append(chr);
+                fLyricscursor.append(e->tick());
+            }
+        }
     }
 
     return true;
@@ -316,6 +359,8 @@ MidiEvent *MidiFile::createMetaEvent(int track, uint32_t tick, uint32_t delta, i
         fTempoEvents.append(me);
     if (me->metaEventType() == MidiMetaType::Lyrics)
         fLyricsEvents.append(me);
+    if (me->metaEventType() == MidiMetaType::TextEvent)
+        fTextEvents.append(me);
     if (me->metaEventType() == MidiMetaType::TimeSignature)
         fTimeSignatureEvents.append(me);
 
