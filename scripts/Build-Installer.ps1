@@ -24,7 +24,7 @@ function Find-Iscc {
     foreach ($candidate in $candidates) {
         if (Test-Path -LiteralPath $candidate -PathType Leaf) { return $candidate }
     }
-    throw 'Inno Setup 6 was not found. Install it, or add ISCC.exe to PATH.'
+    throw 'Inno Setup 6 or 7 was not found. Install it, or add ISCC.exe to PATH.'
 }
 
 if (-not $SkipStage) {
