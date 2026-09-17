@@ -51,7 +51,7 @@ songs, SoundFonts, or VST plug-ins to this repository.
 | Check | Expected result |
 |---|---|
 | Fresh launch with no MIDI hardware | Starts with SoundFont/None fallback; no startup error |
-| SQLite song database | Opens, creates/updates the song database, and restarts successfully — **PASS** with an isolated staged `Data\\Database.db3`; verified header and tables, then reopened without error (Windows x64 maintainer test, 2026-09-17) |
+| SQLite song database | Opens, creates/updates the song database, and restarts successfully — **PASS** with an isolated staged `Data\\Database.db3`; verified header and tables, scanned the two generated KAR fixtures into two rows, then reopened without error (Windows x64 maintainer test, 2026-09-17) |
 | Language | Thai and English both switch without relaunch |
 | NCN | Scan and play MIDI, lyric, and cursor data correctly |
 | KAR with MIDI lyric events (`FF 05`) | Lyric text appears and advances with playback — **PASS** on the staged synthetic fixture (Windows x64 maintainer test, 2026-09-17) |
