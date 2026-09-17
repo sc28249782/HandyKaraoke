@@ -185,6 +185,7 @@ is documentation only.
 | --- | --- | --- |
 | VS 2022 + Qt 5.15.2 x64 build | PASS | Release and Debug builds completed after recovery fixes. |
 | Runtime DLL deployment and manifest | PASS | `stage-smoke` verified the staged Qt/BASS runtime layout; application launched from the stage. |
+| Hosted Windows CI | PASS | GitHub Actions run 16 completed Qt installation, CMake/Ninja Release build, `stage-smoke`, fixture generation, and stage-artifact upload (2026-09-17). |
 | Language switch | PASS | Thai and English switched successfully. |
 | NCN/MIDI + SoundFont | PASS | Manually tested by maintainer; MIDI and SoundFont playback were good. |
 | No MIDI hardware / stale settings | PASS | SoundFont/None fallback and recovery paths tested. |
