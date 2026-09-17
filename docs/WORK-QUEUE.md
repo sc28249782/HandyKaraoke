@@ -86,12 +86,12 @@ song, SoundFont, and VST locations ready for smoke testing.
       runtime directory.
 - [x] Add a static runtime-manifest verifier and a documented manual playback
       matrix in `docs/P1C-RELEASE-QUALITY-GATE.md`.
+- [x] Add a generator for a synthetic, redistributable KAR `Words`/`FF 01`
+      fixture; it is created only inside the staged test folder.
 - [ ] Run `stage-smoke` from a Windows Release build and record the result.
 - [ ] Run and record the manual staged NCN, KAR (`FF 05` and `Words/FF 01`),
       SoundFont, language, Safe mode, and Reset settings matrix with authorised
       fixtures.
-  - [x] KAR `Words`/`FF 01` lyric extraction and line markers
-        (Windows x64 Release stage maintainer test, 2026-09-17).
 - [ ] Resolve the remaining `DialogHelper` missing-return compiler warnings.
 
 **Done when:** the static stage test and all applicable manual tests pass from
