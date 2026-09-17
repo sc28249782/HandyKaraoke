@@ -191,7 +191,7 @@ is documentation only.
 | Safe Mode and Reset Settings | PASS | Both recovery flows worked as expected. |
 | Real KAR `Words` / `FF 01` | PASS | Lyrics advanced after the parser fix. The supplied commercial file is not a repository fixture. |
 | Synthetic KAR `Words` / `FF 01` | PASS | Text advanced, short piano notes were heard, and the application neither hung nor exited. |
-| KAR `FF 05` fixture | READY FOR TEST | `stage-fixture` now generates a legal synthetic fixture; a manual result is still required. |
+| KAR `FF 05` fixture | PASS | Synthetic staged fixture showed advancing lyrics and piano notes; no hang or exit (maintainer test, 2026-09-17). |
 | SQLite creation/reopen from a clean staged folder | NOT YET RECORDED | Required before closing the whole P1 gate. |
 | VST scan/playback | NOT TESTED | Legacy checker is intentionally not staged. |
 | Physical MIDI reconnect/reorder | DEFERRED | Awaiting test hardware. |
