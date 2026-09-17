@@ -213,6 +213,18 @@ if(WIN32)
 
     # Short, conventional alias used by the release smoke-test instructions.
     add_custom_target(stage DEPENDS stage-runtime)
+
+    find_program(HK_POWERSHELL_EXECUTABLE
+        NAMES powershell.exe powershell pwsh.exe pwsh
+        REQUIRED)
+    add_custom_target(stage-smoke
+        COMMAND "${HK_POWERSHELL_EXECUTABLE}"
+                -NoProfile -ExecutionPolicy Bypass
+                -File "${CMAKE_CURRENT_SOURCE_DIR}/scripts/Test-StageRuntime.ps1"
+                -StageDir "${HK_STAGE_DIR}"
+        DEPENDS stage
+        COMMENT "Validating the staged HandyKaraoke runtime manifest"
+        VERBATIM)
 endif()
 
 # Qt 6 support is an explicit migration goal. A successful Qt 5 recovery build
