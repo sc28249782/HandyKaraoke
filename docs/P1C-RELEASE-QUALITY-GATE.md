@@ -19,7 +19,18 @@ manifest. The static check fails if a required Qt/BASS DLL, plug-in, recovery
 launcher, language file, SQLite driver, or expected empty media directory is
 missing.
 
-Run the staged executable only after the command passes:
+Create the synthetic, redistributable KAR regression fixture before the KAR
+`Words`/`FF 01` test:
+
+```bat
+cmake --build build\msvc-x64-release --target stage-fixture
+```
+
+It writes `KAR-Words-FF01-Regression.kar` under the staged `Songs\KAR`
+folder. The file has no commercial music or lyrics: it contains only three
+short test lines and both `\\` and `/` markers.
+
+Run the staged executable after the static check passes and the fixture exists:
 
 ```bat
 build\msvc-x64-release\stage\HandyKaraoke\HandyKaraoke.exe
