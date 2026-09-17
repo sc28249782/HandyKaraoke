@@ -160,6 +160,10 @@ repository.
   for an invalid `SpeakerType`, removing the MSVC C4715 missing-return warnings
   without attempting to use an invalid asset path.
 
+- P3.1 removed the remaining MSVC warnings: invalid speaker/Chorus enum values
+  now have safe fallbacks, and raw MIDI controller bytes use explicit `BYTE`
+  conversions. GitHub Actions run 28 compiled without any compiler warnings.
+
 ## Current architecture
 
 ```mermaid
