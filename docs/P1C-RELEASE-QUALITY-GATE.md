@@ -26,10 +26,14 @@ Create the synthetic, redistributable KAR regression fixtures before the KAR
 cmake --build build\msvc-x64-release --target stage-fixture
 ```
 
-It writes `KAR-Words-FF01-Regression.kar` under the staged `Songs\KAR`
-folder. The file has no commercial music or lyrics: it contains only three
-short test lines, both `\\` and `/` markers, and short synthetic MIDI notes
-throughout the lyric timeline to exercise normal playback.
+It writes two files under the staged `Songs\\KAR` folder:
+
+- `KAR-Words-FF01-Regression.kar`: text events (`FF 01`) in a `Words` track.
+- `KAR-Lyrics-FF05-Regression.kar`: standard lyric events (`FF 05`).
+
+Neither has commercial music or lyrics. Each contains short test lines,
+`\\` and `/` markers, Program Change `C0 00` (piano), and synthetic MIDI
+notes throughout the lyric timeline.
 
 Run the staged executable after the static check passes and the fixture exists:
 
@@ -93,6 +97,12 @@ Notes or defects:
 | Recovery | **PASS** — stale/no MIDI settings, Safe Mode, Reset Settings |
 | SQLite | **PASS** — isolated staged database created, reopened, and contained two generated KAR rows |
 | Deferred | VST scanning/playback and physical MIDI reconnect/reorder |
+
+## Status
+
+**Complete (2026-09-17).** The static stage manifest and all applicable
+Windows staged manual checks passed. VST and physical-MIDI hardware validation
+remain deferred P2/P3 work, not blockers for this recovery gate.
 
 ## Exit rule
 
