@@ -17,7 +17,7 @@ The legacy `handy-x64.iss` contains hard-coded developer paths and is retained o
 ## Prerequisites
 
 - Windows x64 CMake release build already configured;
-- Inno Setup 6 installed (`ISCC.exe` on `PATH`, or in its standard Program Files location); and
+- Inno Setup 7 or 6 installed (`ISCC.exe` on `PATH`, or in its standard Program Files location). Inno Setup 7 x64 is the current recommended installer compiler; and
 - a successful `stage-smoke` build.
 
 ## Build
