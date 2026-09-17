@@ -164,6 +164,22 @@ repository.
   now have safe fallbacks, and raw MIDI controller bytes use explicit `BYTE`
   conversions. GitHub Actions run 28 compiled without any compiler warnings.
 
+### 6. P4a BASS stack refresh — local validation
+
+- Added `scripts/Refresh-BassSdk.ps1`, which downloads the selected official
+  BASS packages, validates their headers and x64 artifacts across the package
+  layouts, and supports a separate `-Apply` operation with a timestamped
+  local backup.
+- On 2026-09-17, the Windows x64 maintainer applied BASS 2.4.18.3, BASSMIDI
+  2.4.16, BASSmix 2.4.13, and BASS FX 2.4.12.6. BASS/BASSMIDI/BASSmix changed
+  header, x64 import library, and DLL; BASS FX changed the DLL while its header
+  and import library were byte-identical. BASS_VST remains 2.4.1.
+- The Release configure, staged runtime manifest, synthetic KAR fixture
+  generation, and manual NCN/MIDI + SoundFont, KAR FF01/FF05, tempo, and
+  transpose checks all passed after the refresh.
+- The refreshed binary files have not yet been committed/pushed from the
+  Windows worktree, so the corresponding GitHub Actions result is pending.
+
 ## Current architecture
 
 ```mermaid
