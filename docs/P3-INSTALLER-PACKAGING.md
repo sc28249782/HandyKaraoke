@@ -28,7 +28,7 @@ From the repository root:
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts\Build-Installer.ps1
 ~~~
 
-The script runs `stage-smoke`, checks essential runtime files, and invokes Inno Setup with the stage path and output directory as explicit parameters. The default output is:
+The script runs `stage-smoke`, checks essential runtime files, and invokes Inno Setup with the stage path and output directory as explicit parameters. It detects the standard machine-wide and per-user Inno Setup 7/6 locations. If Inno Setup is installed elsewhere, pass its compiler explicitly with `-IsccPath`. The default output is:
 
 ~~~text
 build\msvc-x64-release\package\HandyKaraoke-3.0.0-alpha-recovery-x64-setup.exe
@@ -38,6 +38,13 @@ To identify a planned version without editing the script:
 
 ~~~powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts\Build-Installer.ps1 -Version 3.0.0-alpha.1
+~~~
+
+For example:
+
+~~~powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts\Build-Installer.ps1 \
+  -IsccPath "$env:LOCALAPPDATA\Programs\Inno Setup 7\ISCC.exe"
 ~~~
 
 ## Installer behaviour
