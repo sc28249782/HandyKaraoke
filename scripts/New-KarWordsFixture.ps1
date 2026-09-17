@@ -64,6 +64,18 @@ function Add-MetaText {
     Add-Bytes -Target $Track -Bytes $textBytes
 }
 
+function Add-ChannelEvent1 {
+    param(
+        [System.Collections.Generic.List[byte]]$Track,
+        [uint32]$Delta,
+        [byte]$Status,
+        [byte]$Data1
+    )
+    # Program Change and Channel Aftertouch carry one data byte.
+    Add-VariableLength -Target $Track -Value $Delta
+    Add-Bytes -Target $Track -Bytes ([byte[]]($Status, $Data1))
+}
+
 function Add-ChannelEvent2 {
     param(
         [System.Collections.Generic.List[byte]]$Track,
@@ -122,14 +134,15 @@ Add-EndOfTrack -Track $headerTrack -Delta 0
 
 $wordsTrack = [System.Collections.Generic.List[byte]]::new()
 Add-MetaText -Track $wordsTrack -Delta 0 -MetaType 0x03 -Text 'Words'
-Add-MetaText -Track $wordsTrack -Delta 0 -MetaType 0x01 -Text '\Words track test'
+Add-MetaText -Track $wordsTrack -Delta 0 -MetaType 0x01 -Text '\\Words track test'
 Add-MetaText -Track $wordsTrack -Delta 384 -MetaType 0x01 -Text '/Second line'
-Add-MetaText -Track $wordsTrack -Delta 384 -MetaType 0x01 -Text '\Third line'
+Add-MetaText -Track $wordsTrack -Delta 384 -MetaType 0x01 -Text '\\Third line'
 Add-MetaText -Track $wordsTrack -Delta 384 -MetaType 0x01 -Text ' finish'
 Add-EndOfTrack -Track $wordsTrack -Delta 768
 
 $musicTrack = [System.Collections.Generic.List[byte]]::new()
 Add-MetaText -Track $musicTrack -Delta 0 -MetaType 0x03 -Text 'Regression tone'
+Add-ChannelEvent1 -Track $musicTrack -Delta 0 -Status 0xc0 -Data1 0x00
 
 # The legacy sequencer advances time from channel events, not lyric meta-events.
 # Keep one short note around every lyric boundary so the fixture stays playable
