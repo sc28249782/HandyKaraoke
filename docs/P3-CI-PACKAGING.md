@@ -32,6 +32,11 @@ separate `qtwinextras` package.  Removing that request was correct: the
 desktop Qt 5.15.2 kit already supplies the WinExtras component required by the
 build.
 
+GitHub Actions run **28** subsequently verified P3.1: the same Release build
+and stage checks passed with no MSVC compiler warnings. The remaining workflow
+annotation is the Node 20 deprecation warning emitted by third-party actions;
+it does not originate in HandyKaraoke.
+
 ## What CI proves
 
 - The repository contains enough x64 source, import libraries, runtime DLLs,
