@@ -72,5 +72,11 @@ Source: "{#SourceDir}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs 
 
 [Run]
 ; windeployqt places the VC redistributable in the verified stage.
-Filename: "{app}\vc_redist.x64.exe"; Parameters: "/install /passive /norestart"; Flags: waituntilterminated ignoreerrors skipifdoesntexist
+Filename: "{app}\vc_redist.x64.exe"; Parameters: "/install /passive /norestart"; Flags: waituntilterminated; Check: VCRedistExists
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
+
+[Code]
+function VCRedistExists: Boolean;
+begin
+  Result := FileExists(ExpandConstant('{app}\vc_redist.x64.exe'));
+end;
