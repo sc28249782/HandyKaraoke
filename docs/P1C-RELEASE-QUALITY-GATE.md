@@ -54,7 +54,7 @@ songs, SoundFonts, or VST plug-ins to this repository.
 | SQLite song database | Opens, creates/updates the song database, and restarts successfully |
 | Language | Thai and English both switch without relaunch |
 | NCN | Scan and play MIDI, lyric, and cursor data correctly |
-| KAR with MIDI lyric events (`FF 05`) | Lyric text appears and advances with playback |
+| KAR with MIDI lyric events (`FF 05`) | Lyric text appears and advances with playback — **PASS** on the staged synthetic fixture (Windows x64 maintainer test, 2026-09-17) |
 | KAR with a `Words`/`Lyrics` text track (`FF 01`) | Text appears; `\\` and `/` line markers advance to a new line |
 | SoundFont | Built-in MIDI Synthesizer produces audio through the selected output |
 | Safe mode | `HandyKaraoke-SafeMode.cmd` launches with recoverable defaults |
