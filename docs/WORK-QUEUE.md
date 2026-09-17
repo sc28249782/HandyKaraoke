@@ -86,8 +86,8 @@ song, SoundFont, and VST locations ready for smoke testing.
       runtime directory.
 - [x] Add a static runtime-manifest verifier and a documented manual playback
       matrix in `docs/P1C-RELEASE-QUALITY-GATE.md`.
-- [x] Add a generator for a synthetic, redistributable KAR `Words`/`FF 01`
-      fixture; it is created only inside the staged test folder.
+- [x] Add a generator for synthetic, redistributable KAR `FF 05` and `Words`/`FF 01`
+      fixtures; they are created only inside the staged test folder.
 - [x] Ignore Meta/SysEx records in MIDI output dispatch; these events have no
       MIDI channel and previously could access the channel mixer out of bounds.
 - [x] Default missing MIDI time signatures to 4/4 in bar calculations and
