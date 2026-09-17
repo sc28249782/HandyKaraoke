@@ -19,8 +19,8 @@ manifest. The static check fails if a required Qt/BASS DLL, plug-in, recovery
 launcher, language file, SQLite driver, or expected empty media directory is
 missing.
 
-Create the synthetic, redistributable KAR regression fixture before the KAR
-`Words`/`FF 01` test:
+Create the synthetic, redistributable KAR regression fixtures before the KAR
+`FF 05` and `Words`/`FF 01` tests:
 
 ```bat
 cmake --build build\msvc-x64-release --target stage-fixture
