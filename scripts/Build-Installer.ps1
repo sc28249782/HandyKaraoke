@@ -32,6 +32,54 @@ function Find-Iscc {
     foreach ($candidate in $candidates) {
         if (Test-Path -LiteralPath $candidate -PathType Leaf) { return $candidate }
     }
+
+    $uninstallRoots = @(
+        'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall',
+        'HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall',
+        'HKLM:\Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall'
+    )
+    foreach ($root in $uninstallRoots) {
+        if (-not (Test-Path -LiteralPath $root)) { continue }
+        foreach ($entry in Get-ChildItem -LiteralPath $root) {
+            $details = Get-ItemProperty -LiteralPath $entry.PSPath
+            if ($details.DisplayName -notlike 'Inno Setup*') { continue }
+            if ($details.InstallLocation) {
+                $candidate = Join-Path $details.InstallLocation 'ISCC.exe'
+                if (Test-Path -LiteralPath $candidate -PathType Leaf) { return $candidate }
+            }
+            if ($details.DisplayIcon) {
+                $iconPath = ($details.DisplayIcon -replace '^"', '' -replace '",?\d*
+
+if (-not $SkipStage) {
+    & cmake --build $BuildDir --target stage-smoke --parallel
+    if ($LASTEXITCODE -ne 0) { throw 'stage-smoke failed; installer was not built.' }
+}
+
+foreach ($required in @(
+    (Join-Path $StageDir 'HandyKaraoke.exe'),
+    (Join-Path $StageDir 'platforms\qwindows.dll'),
+    (Join-Path $StageDir 'sqldrivers\qsqlite.dll'),
+    (Join-Path $StageDir 'bass.dll'),
+    (Join-Path $StageDir 'bassmidi.dll')
+)) {
+    if (-not (Test-Path -LiteralPath $required -PathType Leaf)) {
+        throw "Verified stage is incomplete: $required"
+    }
+}
+
+New-Item -ItemType Directory -Force -Path $OutputDir | Out-Null
+$iscc = Find-Iscc
+& $iscc ("/DSourceDir=" + $StageDir) ("/DOutputDir=" + $OutputDir) ("/DMyAppVersion=" + $Version) $issScript
+if ($LASTEXITCODE -ne 0) { throw "Inno Setup failed with exit code $LASTEXITCODE." }
+
+Write-Host "Installer created in: $OutputDir"
+, '')
+                $candidate = Join-Path (Split-Path -Parent $iconPath) 'ISCC.exe'
+                if (Test-Path -LiteralPath $candidate -PathType Leaf) { return $candidate }
+            }
+        }
+    }
+
     throw 'Inno Setup 6 or 7 was not found. Install it, or add ISCC.exe to PATH.'
 }
 
