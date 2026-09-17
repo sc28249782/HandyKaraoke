@@ -96,3 +96,13 @@ The remaining release gate is to commit the binary changes from the Windows
 worktree, push them to this branch, and confirm the GitHub Actions Windows
 workflow. The BASS distribution/licence decision must also be recorded before
 publishing a binary release.
+
+## CI record — 2026-09-17
+
+The refreshed binary commit `ee7167401d57c153f1331f3c15e28f573215ea92`
+passed GitHub Actions [Windows x64 recovery build run 51](https://github.com/sc28249782/HandyKaraoke/actions/runs/35232175350).
+The hosted Windows job completed configure, Release build, staged runtime
+validation, synthetic KAR fixture generation, and staged-artifact upload.
+
+**Technical status: complete.** Keep the separate BASS distribution/licence
+record as a prerequisite for any public binary release.
