@@ -90,6 +90,8 @@ song, SoundFont, and VST locations ready for smoke testing.
 - [ ] Run and record the manual staged NCN, KAR (`FF 05` and `Words/FF 01`),
       SoundFont, language, Safe mode, and Reset settings matrix with authorised
       fixtures.
+  - [x] KAR `Words`/`FF 01` lyric extraction and line markers
+        (Windows x64 Release stage maintainer test, 2026-09-17).
 - [ ] Resolve the remaining `DialogHelper` missing-return compiler warnings.
 
 **Done when:** the static stage test and all applicable manual tests pass from
