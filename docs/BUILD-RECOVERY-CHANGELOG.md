@@ -177,8 +177,9 @@ repository.
 - The Release configure, staged runtime manifest, synthetic KAR fixture
   generation, and manual NCN/MIDI + SoundFont, KAR FF01/FF05, tempo, and
   transpose checks all passed after the refresh.
-- The refreshed binary files have not yet been committed/pushed from the
-  Windows worktree, so the corresponding GitHub Actions result is pending.
+- The refreshed binary commit `ee71674` passed GitHub Actions Windows x64
+  recovery build run 51 on 2026-09-17, including staged validation, fixture
+  generation, and artifact upload.
 
 ## Current architecture
 
