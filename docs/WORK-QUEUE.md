@@ -164,8 +164,9 @@ from a developer workstation.
 - [x] Pass Release `stage-smoke`, `stage-fixture`, and the manual
       MIDI/SoundFont/KAR regression matrix after the binary update
       (Windows x64 maintainer test, 2026-09-17).
-- [ ] Commit and push the refreshed binary files, then pass the GitHub Actions
-      Windows workflow against those exact binaries.
+- [x] Commit and push the refreshed binary files, then pass the GitHub Actions
+      Windows workflow against those exact binaries (commit `ee71674`;
+      GitHub Actions run 51, 2026-09-17).
 
-**Done when:** the approved BASS SDK binaries are committed together and all
-local and CI release gates pass.
+**Technical status:** Complete. Record the BASS distribution/licence decision
+before publishing a public binary release.
