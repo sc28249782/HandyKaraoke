@@ -130,9 +130,21 @@ Add-EndOfTrack -Track $wordsTrack -Delta 768
 
 $musicTrack = [System.Collections.Generic.List[byte]]::new()
 Add-MetaText -Track $musicTrack -Delta 0 -MetaType 0x03 -Text 'Regression tone'
-Add-ChannelEvent2 -Track $musicTrack -Delta 0 -Status 0x90 -Data1 0x3c -Data2 0x40
+
+# The legacy sequencer advances time from channel events, not lyric meta-events.
+# Keep one short note around every lyric boundary so the fixture stays playable
+# through all three displayed lines.
+Add-ChannelEvent2 -Track $musicTrack -Delta 0   -Status 0x90 -Data1 0x3c -Data2 0x40
 Add-ChannelEvent2 -Track $musicTrack -Delta 192 -Status 0x80 -Data1 0x3c -Data2 0x00
-Add-EndOfTrack -Track $musicTrack -Delta 1728
+Add-ChannelEvent2 -Track $musicTrack -Delta 192 -Status 0x90 -Data1 0x3e -Data2 0x40
+Add-ChannelEvent2 -Track $musicTrack -Delta 192 -Status 0x80 -Data1 0x3e -Data2 0x00
+Add-ChannelEvent2 -Track $musicTrack -Delta 192 -Status 0x90 -Data1 0x40 -Data2 0x40
+Add-ChannelEvent2 -Track $musicTrack -Delta 192 -Status 0x80 -Data1 0x40 -Data2 0x00
+Add-ChannelEvent2 -Track $musicTrack -Delta 192 -Status 0x90 -Data1 0x41 -Data2 0x40
+Add-ChannelEvent2 -Track $musicTrack -Delta 192 -Status 0x80 -Data1 0x41 -Data2 0x00
+Add-ChannelEvent2 -Track $musicTrack -Delta 576 -Status 0x90 -Data1 0x43 -Data2 0x40
+Add-ChannelEvent2 -Track $musicTrack -Delta 192 -Status 0x80 -Data1 0x43 -Data2 0x00
+Add-EndOfTrack -Track $musicTrack -Delta 0
 
 $file = [System.Collections.Generic.List[byte]]::new()
 Add-Ascii -Target $file -Text 'MThd'
