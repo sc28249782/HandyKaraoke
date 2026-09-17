@@ -210,6 +210,9 @@ if(WIN32)
         DEPENDS HandyKaraoke
         COMMENT "Staging a clean HandyKaraoke runtime layout"
         VERBATIM)
+
+    # Short, conventional alias used by the release smoke-test instructions.
+    add_custom_target(stage DEPENDS stage-runtime)
 endif()
 
 # Qt 6 support is an explicit migration goal. A successful Qt 5 recovery build
