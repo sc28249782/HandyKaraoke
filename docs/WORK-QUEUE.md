@@ -103,6 +103,9 @@ song, SoundFont, and VST locations ready for smoke testing.
 - [x] Create and reopen an isolated staged SQLite database; confirm the
       `SQLite format 3` header and `songs`/`miscellaneous` tables (Windows x64
       maintainer test, 2026-09-17).
+- [x] Scan the two staged synthetic KAR fixtures into the isolated database;
+      verify two `KAR` rows are stored and the staged application reopens
+      without error (Windows x64 maintainer test, 2026-09-17).
 - [ ] Run `stage-smoke` from a Windows Release build and record the result.
 - [ ] Run and record the manual staged NCN, KAR (`FF 05` and `Words/FF 01`),
       SoundFont, language, Safe mode, and Reset settings matrix with authorised
