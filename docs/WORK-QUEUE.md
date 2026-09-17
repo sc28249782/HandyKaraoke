@@ -157,7 +157,7 @@ from a developer workstation.
 - [x] Record the compatible BASS/BASSMIDI/BASSmix/BASS FX target versions,
       licence gate, update script, and regression procedure in
       `docs/P4A-BASS-STACK-REFRESH.md`.
-- [ ] Confirm the intended distribution complies with the current BASS licence.
+- [x] Adopt the non-commercial [Official Binary Release Policy](OFFICIAL-BINARY-RELEASE-POLICY.md) for project-published binaries; preserve GPLv3 recipient rights (2026-09-17).
 - [x] Apply the matching BASS/BASSMIDI/BASSmix header, x64 import-library,
       and x64 DLL update plus the BASS FX runtime DLL; retain BASS_VST 2.4.1
       (Windows x64 maintainer test, 2026-09-17).
