@@ -143,9 +143,9 @@ Add-EndOfTrack -Track $wordsTrack -Delta 768
 
 $lyricsTrack = [System.Collections.Generic.List[byte]]::new()
 Add-MetaText -Track $lyricsTrack -Delta 0 -MetaType 0x03 -Text 'Lyrics'
-Add-MetaText -Track $lyricsTrack -Delta 0 -MetaType 0x05 -Text '\\FF05 lyric test'
+Add-MetaText -Track $lyricsTrack -Delta 0 -MetaType 0x05 -Text '\FF05 lyric test'
 Add-MetaText -Track $lyricsTrack -Delta 384 -MetaType 0x05 -Text '/Second lyric'
-Add-MetaText -Track $lyricsTrack -Delta 384 -MetaType 0x05 -Text '\\Third lyric'
+Add-MetaText -Track $lyricsTrack -Delta 384 -MetaType 0x05 -Text '\Third lyric'
 Add-MetaText -Track $lyricsTrack -Delta 384 -MetaType 0x05 -Text ' end'
 Add-EndOfTrack -Track $lyricsTrack -Delta 768
 
