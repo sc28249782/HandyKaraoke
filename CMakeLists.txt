@@ -225,6 +225,15 @@ if(WIN32)
         DEPENDS stage
         COMMENT "Validating the staged HandyKaraoke runtime manifest"
         VERBATIM)
+
+    add_custom_target(stage-fixture
+        COMMAND "${HK_POWERSHELL_EXECUTABLE}"
+                -NoProfile -ExecutionPolicy Bypass
+                -File "${CMAKE_CURRENT_SOURCE_DIR}/scripts/New-KarWordsFixture.ps1"
+                -StageDir "${HK_STAGE_DIR}"
+        DEPENDS stage
+        COMMENT "Creating the synthetic KAR Words regression fixture"
+        VERBATIM)
 endif()
 
 # Qt 6 support is an explicit migration goal. A successful Qt 5 recovery build
