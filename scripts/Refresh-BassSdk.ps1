@@ -25,28 +25,33 @@ function Require-File {
     }
 }
 
-function Resolve-SdkRoot {
+function Resolve-SdkFiles {
     param(
         [string]$ExtractedPath,
         [hashtable]$Package
     )
 
-    $candidates = @($ExtractedPath)
-    $candidates += Get-ChildItem -LiteralPath $ExtractedPath -Directory -Recurse |
-        Select-Object -ExpandProperty FullName
+    $allFiles = @(Get-ChildItem -LiteralPath $ExtractedPath -File -Recurse)
+    $headerMatches = @($allFiles | Where-Object { $_.Name -ieq $Package.Header })
+    $libraryMatches = @($allFiles | Where-Object {
+        $_.Name -ieq $Package.Library -and $_.Directory.Name -ieq 'x64'
+    })
+    $dllMatches = @($allFiles | Where-Object {
+        $_.Name -ieq $Package.Dll -and $_.Directory.Name -ieq 'x64'
+    })
 
-    foreach ($candidate in $candidates) {
-        $header = Join-Path $candidate $Package.Header
-        $library = Join-Path $candidate ('x64\' + $Package.Library)
-        $dll = Join-Path $candidate ('x64\' + $Package.Dll)
-        if ((Test-Path -LiteralPath $header -PathType Leaf) -and
-            (Test-Path -LiteralPath $library -PathType Leaf) -and
-            (Test-Path -LiteralPath $dll -PathType Leaf)) {
-            return $candidate
-        }
+    if ($headerMatches.Count -ne 1 -or
+        $libraryMatches.Count -ne 1 -or
+        $dllMatches.Count -ne 1) {
+        throw ("Unable to resolve a unique x64 SDK file set for {0}. Found header={1}, library={2}, dll={3} below: {4}" -f
+            $Package.Name, $headerMatches.Count, $libraryMatches.Count, $dllMatches.Count, $ExtractedPath)
     }
 
-    throw "Unable to find a compatible x64 SDK layout for $($Package.Name) below: $ExtractedPath"
+    return [PSCustomObject]@{
+        Header = $headerMatches[0].FullName
+        Library = $libraryMatches[0].FullName
+        Dll = $dllMatches[0].FullName
+    }
 }
 
 New-Item -ItemType Directory -Force -Path $downloadRoot, $extractRoot | Out-Null
@@ -65,10 +70,10 @@ foreach ($package in $packages) {
     }
     Expand-Archive -LiteralPath $archive -DestinationPath $destination -Force
 
-    $sdkRoot = Resolve-SdkRoot -ExtractedPath $destination -Package $package
-    $header = Join-Path $sdkRoot $package.Header
-    $library = Join-Path $sdkRoot ('x64\' + $package.Library)
-    $dll = Join-Path $sdkRoot ('x64\' + $package.Dll)
+    $sdkFiles = Resolve-SdkFiles -ExtractedPath $destination -Package $package
+    $header = $sdkFiles.Header
+    $library = $sdkFiles.Library
+    $dll = $sdkFiles.Dll
     Require-File $header
     Require-File $library
     Require-File $dll
