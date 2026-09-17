@@ -134,7 +134,7 @@ song, SoundFont, and VST locations ready for smoke testing.
 
 - [ ] Replace absolute developer-machine paths in the Inno Setup scripts.
 - [x] Add a Windows GitHub Actions build/test workflow (`windows-recovery.yml`).
-- [x] Produce a staged runtime artifact for push/PR builds (workflow configuration added; first hosted run pending).
+- [x] Produce a staged runtime artifact for push/PR builds (hosted Windows run 16 passed on 2026-09-17).
 - [x] Keep auto-update disabled until signing and endpoint ownership are verified.
 
 **Done when:** CI produces an installable Windows x64 artifact without paths
