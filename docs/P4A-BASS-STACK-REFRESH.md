@@ -26,7 +26,7 @@ It does not touch the existing `BASS_VST` files.
 
 ## License gate
 
-Before using `-Apply`, confirm that the intended distribution and revenue model complies with the current Un4seen BASS licence. The upstream site states that free use is for non-commercial use; commercial or money-making products require a commercial licence. Record that decision before publishing a binary release.
+Before using `-Apply`, confirm that the intended distribution and revenue model complies with the current Un4seen BASS licence. The upstream site states that free use is for non-commercial use; commercial or money-making products require a commercial licence. The project adopted the [Official Binary Release Policy](OFFICIAL-BINARY-RELEASE-POLICY.md) on 2026-09-17: official binaries are published only for non-commercial use. This is a maintainer release policy and does not alter GPLv3 rights.
 
 ## Safe update procedure
 
