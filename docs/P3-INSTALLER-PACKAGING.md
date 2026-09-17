@@ -43,8 +43,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts\Build-Installer.ps1 
 For example:
 
 ~~~powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts\Build-Installer.ps1 \
-  -IsccPath "$env:LOCALAPPDATA\Programs\Inno Setup 7\ISCC.exe"
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts\Build-Installer.ps1 -IsccPath "$env:LOCALAPPDATA\Programs\Inno Setup 7\ISCC.exe"
 ~~~
 
 ## Installer behaviour
