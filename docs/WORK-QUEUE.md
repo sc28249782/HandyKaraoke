@@ -150,3 +150,18 @@ from third-party actions and does not come from the HandyKaraoke compiler.
 
 **Done when:** CI produces an installable Windows x64 artifact without paths
 from a developer workstation.
+
+
+## P4a — BASS stack refresh
+
+- [x] Record the compatible BASS/BASSMIDI/BASSmix/BASS FX target versions,
+      licence gate, update script, and regression procedure in
+      `docs/P4A-BASS-STACK-REFRESH.md`.
+- [ ] Confirm the intended distribution complies with the current BASS licence.
+- [ ] Apply the matching header, x64 import-library, and x64 DLL update as one
+      atomic stack; retain BASS_VST 2.4.1.
+- [ ] Pass the Release stage checks, manual MIDI/SoundFont/KAR regression
+      matrix, and the GitHub Actions Windows workflow after the binary update.
+
+**Done when:** the approved BASS SDK binaries are committed together and all
+local and CI release gates pass.
