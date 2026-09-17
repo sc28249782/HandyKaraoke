@@ -80,6 +80,21 @@ documented instructions.
 **Done when:** a fresh staged folder has the supported runtime files and empty
 song, SoundFont, and VST locations ready for smoke testing.
 
+## P1c — Release quality gate
+
+- [x] Add `stage` and `stage-smoke` CMake targets for the release-like
+      runtime directory.
+- [x] Add a static runtime-manifest verifier and a documented manual playback
+      matrix in `docs/P1C-RELEASE-QUALITY-GATE.md`.
+- [ ] Run `stage-smoke` from a Windows Release build and record the result.
+- [ ] Run and record the manual staged NCN, KAR (`FF 05` and `Words/FF 01`),
+      SoundFont, language, Safe mode, and Reset settings matrix with authorised
+      fixtures.
+- [ ] Resolve the remaining `DialogHelper` missing-return compiler warnings.
+
+**Done when:** the static stage test and all applicable manual tests pass from
+`build\\msvc-x64-release\\stage\\HandyKaraoke`.
+
 ## P2 — MIDI configuration resilience
 
 - [x] Bounds-check persisted MIDI device selections, including per-channel
