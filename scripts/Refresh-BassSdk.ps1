@@ -25,6 +25,30 @@ function Require-File {
     }
 }
 
+function Resolve-SdkRoot {
+    param(
+        [string]$ExtractedPath,
+        [hashtable]$Package
+    )
+
+    $candidates = @($ExtractedPath)
+    $candidates += Get-ChildItem -LiteralPath $ExtractedPath -Directory -Recurse |
+        Select-Object -ExpandProperty FullName
+
+    foreach ($candidate in $candidates) {
+        $header = Join-Path $candidate $Package.Header
+        $library = Join-Path $candidate ('x64\' + $Package.Library)
+        $dll = Join-Path $candidate ('x64\' + $Package.Dll)
+        if ((Test-Path -LiteralPath $header -PathType Leaf) -and
+            (Test-Path -LiteralPath $library -PathType Leaf) -and
+            (Test-Path -LiteralPath $dll -PathType Leaf)) {
+            return $candidate
+        }
+    }
+
+    throw "Unable to find a compatible x64 SDK layout for $($Package.Name) below: $ExtractedPath"
+}
+
 New-Item -ItemType Directory -Force -Path $downloadRoot, $extractRoot | Out-Null
 $resolvedPackages = @()
 
@@ -41,9 +65,10 @@ foreach ($package in $packages) {
     }
     Expand-Archive -LiteralPath $archive -DestinationPath $destination -Force
 
-    $header = Join-Path $destination $package.Header
-    $library = Join-Path $destination ('x64\' + $package.Library)
-    $dll = Join-Path $destination ('x64\' + $package.Dll)
+    $sdkRoot = Resolve-SdkRoot -ExtractedPath $destination -Package $package
+    $header = Join-Path $sdkRoot $package.Header
+    $library = Join-Path $sdkRoot ('x64\' + $package.Library)
+    $dll = Join-Path $sdkRoot ('x64\' + $package.Dll)
     Require-File $header
     Require-File $library
     Require-File $dll
