@@ -751,7 +751,7 @@ void MidiPlayer::sendEvent(MidiEvent e)
     }
 
     const int channel = e.channel();
-    if (channel < 0 || channel >= _midiChannels.size())
+    if (channel < 0 || channel >= static_cast<int>(sizeof(_midiChannels) / sizeof(_midiChannels[0])))
         return;
 
     _playingEventPtr = &e;
