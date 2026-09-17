@@ -81,6 +81,19 @@ Manual matrix result: PASS / FAIL
 Notes or defects:
 ```
 
+## 4. Recorded P1c result
+
+| Field | Recorded value |
+| --- | --- |
+| Date | 2026-09-17 |
+| Environment | Windows 11 x64, Visual Studio 2022 / MSVC 14.44, Qt 5.15.2 `msvc2019_64` |
+| Stage path | `build\\msvc-x64-release\\stage\\HandyKaraoke` |
+| Static stage manifest | **PASS** — `stage-smoke` completed with the required runtime layout |
+| Playback | **PASS** — NCN/MIDI SoundFont, KAR `FF 01`, and KAR `FF 05` |
+| Recovery | **PASS** — stale/no MIDI settings, Safe Mode, Reset Settings |
+| SQLite | **PASS** — isolated staged database created, reopened, and contained two generated KAR rows |
+| Deferred | VST scanning/playback and physical MIDI reconnect/reorder |
+
 ## Exit rule
 
 P1c passes only when `stage-smoke` passes and every applicable manual matrix
