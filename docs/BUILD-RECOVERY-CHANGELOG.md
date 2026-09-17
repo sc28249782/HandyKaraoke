@@ -83,7 +83,7 @@ configuration.
 | `stage-smoke` | Run `scripts/Test-StageRuntime.ps1` against the stage manifest. |
 | `stage-fixture` | Generate legal synthetic KAR `FF 05` and `Words`/`FF 01` regression files in staged `Songs\\KAR`. |
 | `Test-StageRuntime.ps1` | Verify executable, runtime DLLs, Qt platform/SQLite plug-ins, recovery launchers, language file, and expected empty content folders. |
-| `New-KarWordsFixture.ps1` | Emit `KAR-Words-FF01-Regression.kar`; it is generated, never committed as media. |
+| `New-KarWordsFixture.ps1` | Emit `KAR-Words-FF01-Regression.kar` and `KAR-Lyrics-FF05-Regression.kar`; both are generated, never committed as media. |
 
 This arrangement addresses the earlier launch failures caused by missing
 `Qt5Sqld.dll`, `Qt5Widgetsd.dll`, `bass.dll`, and `bassmidi.dll`.
@@ -184,7 +184,7 @@ is documentation only.
 | Area | Result | Evidence / limit |
 | --- | --- | --- |
 | VS 2022 + Qt 5.15.2 x64 build | PASS | Release and Debug builds completed after recovery fixes. |
-| Runtime DLL deployment | PASS | Application launched after staged Qt/BASS deployment. |
+| Runtime DLL deployment and manifest | PASS | `stage-smoke` verified the staged Qt/BASS runtime layout; application launched from the stage. |
 | Language switch | PASS | Thai and English switched successfully. |
 | NCN/MIDI + SoundFont | PASS | Manually tested by maintainer; MIDI and SoundFont playback were good. |
 | No MIDI hardware / stale settings | PASS | SoundFont/None fallback and recovery paths tested. |
@@ -202,8 +202,6 @@ The last confirmed synthetic-KAR result is at branch commit
 
 ## Known limitations and technical debt
 
-- `DialogHelper` still emits MSVC warnings that not all paths return a value.
-  This is queued for correction.
 - Qt 5.15 is a recovery baseline.  Qt 6 requires a separate compatibility and
   packaging pass, especially around removed Qt APIs and deployment.
 - BASS and VST components are legacy binaries/interfaces.  Update them only
@@ -227,9 +225,8 @@ The last confirmed synthetic-KAR result is at branch commit
    the P1c execution log.
 4. Keep parser/audio regressions covered by synthetic or otherwise authorised
    fixtures only.
-5. Complete the remaining P1c checks, then address the small
-   `DialogHelper` warnings before beginning P3 packaging/CI or the larger MIDI
-   modernisation work.
+5. Use the P3 CI artifact as the repeatable build baseline; continue installer
+   work only after its first hosted run is reviewed.
 
 ## Related documents
 
@@ -242,3 +239,4 @@ The last confirmed synthetic-KAR result is at branch commit
 - [HNK option](HNK-OPTION.md) and [HNK3 RFC](HNK3-RFC.md)
 - [MIDI hardware test plan](MIDI-HARDWARE-TEST-PLAN.md)
 - [Work queue](WORK-QUEUE.md)
+- [P3 CI and packaging](P3-CI-PACKAGING.md)
