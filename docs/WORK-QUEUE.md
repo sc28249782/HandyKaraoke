@@ -90,6 +90,8 @@ song, SoundFont, and VST locations ready for smoke testing.
       fixture; it is created only inside the staged test folder.
 - [x] Ignore Meta/SysEx records in MIDI output dispatch; these events have no
       MIDI channel and previously could access the channel mixer out of bounds.
+- [x] Default missing MIDI time signatures to 4/4 in bar calculations and
+      include an explicit 4/4 event in the synthetic KAR fixture.
 - [ ] Run `stage-smoke` from a Windows Release build and record the result.
 - [ ] Run and record the manual staged NCN, KAR (`FF 05` and `Words/FF 01`),
       SoundFont, language, Safe mode, and Reset settings matrix with authorised
