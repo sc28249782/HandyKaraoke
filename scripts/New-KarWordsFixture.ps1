@@ -134,9 +134,9 @@ Add-EndOfTrack -Track $headerTrack -Delta 0
 
 $wordsTrack = [System.Collections.Generic.List[byte]]::new()
 Add-MetaText -Track $wordsTrack -Delta 0 -MetaType 0x03 -Text 'Words'
-Add-MetaText -Track $wordsTrack -Delta 0 -MetaType 0x01 -Text '\\Words track test'
+Add-MetaText -Track $wordsTrack -Delta 0 -MetaType 0x01 -Text '\Words track test'
 Add-MetaText -Track $wordsTrack -Delta 384 -MetaType 0x01 -Text '/Second line'
-Add-MetaText -Track $wordsTrack -Delta 384 -MetaType 0x01 -Text '\\Third line'
+Add-MetaText -Track $wordsTrack -Delta 384 -MetaType 0x01 -Text '\Third line'
 Add-MetaText -Track $wordsTrack -Delta 384 -MetaType 0x01 -Text ' finish'
 Add-EndOfTrack -Track $wordsTrack -Delta 768
 
