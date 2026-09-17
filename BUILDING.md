@@ -39,6 +39,21 @@ DLLs, `Style.ini`, and `languages/en.qm` beside the executable. Close
 `HandyKaraoke.exe` before building again; Windows cannot relink an executable
 that is still running.
 
+## Release stage smoke test
+
+The release-like stage is the runtime test location. It contains deployed
+dependencies and empty media folders, but never copies user media.
+
+```powershell
+cmake -S . -B build\msvc-x64-release
+cmake --build build\msvc-x64-release --target stage-smoke --parallel
+build\msvc-x64-release\stage\HandyKaraoke\HandyKaraoke.exe
+```
+
+Use this target after each change intended for release testing. The automatic
+check validates the runtime manifest; follow the manual NCN/KAR/SoundFont and
+recovery matrix in [P1c release quality gate](docs/P1C-RELEASE-QUALITY-GATE.md).
+
 ## HNK option
 
 The default is:
