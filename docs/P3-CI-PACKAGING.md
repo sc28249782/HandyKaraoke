@@ -20,6 +20,18 @@ toolchain:
 The artifact is named `HandyKaraoke-windows-x64-stage` and is retained for
 14 days.  It is a portable test runtime, **not** an installer or signed release.
 
+## First hosted result
+
+GitHub Actions workflow run **16** passed on 2026-09-17 for commit
+`0492ac120258fd19497a57cd65c921bf240cef54`.  The following steps all
+completed successfully: Qt installation, CMake configure, Release build,
+`stage-smoke`, fixture generation, and artifact upload.
+
+The initial run failed only because the workflow requested a nonexistent
+separate `qtwinextras` package.  Removing that request was correct: the
+desktop Qt 5.15.2 kit already supplies the WinExtras component required by the
+build.
+
 ## What CI proves
 
 - The repository contains enough x64 source, import libraries, runtime DLLs,
