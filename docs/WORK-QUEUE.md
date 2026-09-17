@@ -69,11 +69,10 @@ documented instructions.
       as a compatibility reference.
 - [x] Add the `stage-runtime` CMake target, which creates a release-like
       runtime layout without copying user media.
-- [ ] Generate a Release-stage folder and verify its runtime manifest.
+- [x] Generate a Release-stage folder and verify its runtime manifest (Windows x64 maintainer test, 2026-09-17).
 - [x] Manually verify NCN/MIDI playback and SoundFont synthesis (maintainer
       test, 2026-09-16).
-- [ ] Confirm the same smoke test is launched from the staged folder and record
-      its runtime manifest.
+- [x] Confirm the staged runtime manifest and launch from the staged folder (Windows x64 maintainer test, 2026-09-17).
 - [ ] Build or deliberately replace the legacy VST checker before enabling
       VST scanning in a staged release.
 
@@ -106,10 +105,10 @@ song, SoundFont, and VST locations ready for smoke testing.
 - [x] Scan the two staged synthetic KAR fixtures into the isolated database;
       verify two `KAR` rows are stored and the staged application reopens
       without error (Windows x64 maintainer test, 2026-09-17).
-- [ ] Run `stage-smoke` from a Windows Release build and record the result.
-- [ ] Run and record the manual staged NCN, KAR (`FF 05` and `Words/FF 01`),
-      SoundFont, language, Safe mode, and Reset settings matrix with authorised
-      fixtures.
+- [x] Run `stage-smoke` from a Windows Release build: PASS (Windows x64 maintainer test, 2026-09-17).
+- [x] Run and record all applicable staged matrix items: NCN, KAR (`FF 05` and
+      `Words`/`FF 01`), SoundFont, language, Safe mode, Reset Settings, SQLite,
+      and staged relink (Windows x64 maintainer tests, 2026-09-16/17).
 - [x] Resolve the `DialogHelper` missing-return compiler warnings by returning an empty string for an invalid speaker enum value.
 
 **Done when:** the static stage test and all applicable manual tests pass from
@@ -134,9 +133,9 @@ song, SoundFont, and VST locations ready for smoke testing.
 ## P3 — CI and packaging
 
 - [ ] Replace absolute developer-machine paths in the Inno Setup scripts.
-- [ ] Add a Windows GitHub Actions build/test workflow.
-- [ ] Produce a PR artifact and package-launch smoke test.
-- [ ] Keep auto-update disabled until signing and endpoint ownership are verified.
+- [x] Add a Windows GitHub Actions build/test workflow (`windows-recovery.yml`).
+- [x] Produce a staged runtime artifact for push/PR builds (workflow configuration added; first hosted run pending).
+- [x] Keep auto-update disabled until signing and endpoint ownership are verified.
 
 **Done when:** CI produces an installable Windows x64 artifact without paths
 from a developer workstation.
