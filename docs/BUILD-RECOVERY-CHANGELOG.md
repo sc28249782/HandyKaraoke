@@ -156,6 +156,10 @@ repository.
   `C0 00` (Acoustic Grand Piano) before its notes.  This replaced an invalid
   attempt to represent Program Change as a three-byte event.
 
+- The three speaker-label/icon helper functions now return an empty `QString`
+  for an invalid `SpeakerType`, removing the MSVC C4715 missing-return warnings
+  without attempting to use an invalid asset path.
+
 ## Current architecture
 
 ```mermaid
