@@ -64,7 +64,7 @@ function Add-MetaText {
     Add-Bytes -Target $Track -Bytes $textBytes
 }
 
-function Add-ChannelEvent {
+function Add-ChannelEvent2 {
     param(
         [System.Collections.Generic.List[byte]]$Track,
         [uint32]$Delta,
@@ -72,6 +72,8 @@ function Add-ChannelEvent {
         [byte]$Data1,
         [byte]$Data2
     )
+    # This helper is only for MIDI events with two data bytes (for example,
+    # Note On and Note Off). Program Change is intentionally not emitted here.
     Add-VariableLength -Target $Track -Value $Delta
     Add-Bytes -Target $Track -Bytes ([byte[]]($Status, $Data1, $Data2))
 }
@@ -118,9 +120,8 @@ Add-EndOfTrack -Track $wordsTrack -Delta 768
 
 $musicTrack = [System.Collections.Generic.List[byte]]::new()
 Add-MetaText -Track $musicTrack -Delta 0 -MetaType 0x03 -Text 'Regression tone'
-Add-ChannelEvent -Track $musicTrack -Delta 0 -Status 0xc0 -Data1 0x00 -Data2 0x00
-Add-ChannelEvent -Track $musicTrack -Delta 0 -Status 0x90 -Data1 0x3c -Data2 0x40
-Add-ChannelEvent -Track $musicTrack -Delta 192 -Status 0x80 -Data1 0x3c -Data2 0x00
+Add-ChannelEvent2 -Track $musicTrack -Delta 0 -Status 0x90 -Data1 0x3c -Data2 0x40
+Add-ChannelEvent2 -Track $musicTrack -Delta 192 -Status 0x80 -Data1 0x3c -Data2 0x00
 Add-EndOfTrack -Track $musicTrack -Delta 1728
 
 $file = [System.Collections.Generic.List[byte]]::new()
