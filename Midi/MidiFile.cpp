@@ -529,7 +529,7 @@ uint32_t MidiFile::tickFromBeat(float beat)
 
 uint32_t MidiFile::tickFromBar(int barNumber)
 {
-    uint32_t result = 0, lastBar = 0, lastBeat = 0, lastBeatInBar = 0;
+    uint32_t result = 0, lastBar = 0, lastBeat = 0, lastBeatInBar = 4;
 
     for (const SignatureBeat &sigBeat : MidiHelper::calculateBeats(this)) {
         uint32_t nBar = lastBar + ((sigBeat.nBeat - lastBeat) / sigBeat.nBeatInBar);
@@ -575,7 +575,7 @@ int MidiFile::barFromTick(uint32_t tick)
 int MidiFile::barCount()
 {
     int bCount = 0;
-    int lastBeat = 0, lastBeatInBar = 0, tempBeatCount = 0;
+    int lastBeat = 0, lastBeatInBar = 4, tempBeatCount = 0;
 
     for (SignatureBeat sigBeat : MidiHelper::calculateBeats(this)) {
         lastBeat = sigBeat.nBeat;
