@@ -78,6 +78,15 @@ function Add-ChannelEvent2 {
     Add-Bytes -Target $Track -Bytes ([byte[]]($Status, $Data1, $Data2))
 }
 
+function Add-TimeSignature44 {
+    param(
+        [System.Collections.Generic.List[byte]]$Track,
+        [uint32]$Delta
+    )
+    Add-VariableLength -Target $Track -Value $Delta
+    Add-Bytes -Target $Track -Bytes ([byte[]](0xff, 0x58, 0x04, 0x04, 0x02, 0x18, 0x08))
+}
+
 function Add-EndOfTrack {
     param(
         [System.Collections.Generic.List[byte]]$Track,
@@ -108,6 +117,7 @@ Add-MetaText -Track $headerTrack -Delta 0 -MetaType 0x01 -Text '@KMIDI KARAOKE F
 Add-MetaText -Track $headerTrack -Delta 0 -MetaType 0x01 -Text '@V0100'
 Add-VariableLength -Target $headerTrack -Value 0
 Add-Bytes -Target $headerTrack -Bytes ([byte[]](0xff, 0x51, 0x03, 0x07, 0xa1, 0x20))
+Add-TimeSignature44 -Track $headerTrack -Delta 0
 Add-EndOfTrack -Track $headerTrack -Delta 0
 
 $wordsTrack = [System.Collections.Generic.List[byte]]::new()
