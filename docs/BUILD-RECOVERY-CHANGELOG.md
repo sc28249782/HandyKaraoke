@@ -81,7 +81,7 @@ configuration.
 | `stage-runtime` | Build then assemble the clean runtime layout. |
 | `stage` | Short alias for `stage-runtime`. |
 | `stage-smoke` | Run `scripts/Test-StageRuntime.ps1` against the stage manifest. |
-| `stage-fixture` | Generate the legal synthetic KAR regression file in staged `Songs\\KAR`. |
+| `stage-fixture` | Generate legal synthetic KAR `FF 05` and `Words`/`FF 01` regression files in staged `Songs\\KAR`. |
 | `Test-StageRuntime.ps1` | Verify executable, runtime DLLs, Qt platform/SQLite plug-ins, recovery launchers, language file, and expected empty content folders. |
 | `New-KarWordsFixture.ps1` | Emit `KAR-Words-FF01-Regression.kar`; it is generated, never committed as media. |
 
@@ -191,7 +191,7 @@ is documentation only.
 | Safe Mode and Reset Settings | PASS | Both recovery flows worked as expected. |
 | Real KAR `Words` / `FF 01` | PASS | Lyrics advanced after the parser fix. The supplied commercial file is not a repository fixture. |
 | Synthetic KAR `Words` / `FF 01` | PASS | Text advanced, short piano notes were heard, and the application neither hung nor exited. |
-| KAR `FF 05` fixture | NOT YET RECORDED | Need a legal fixture or test record. |
+| KAR `FF 05` fixture | READY FOR TEST | `stage-fixture` now generates a legal synthetic fixture; a manual result is still required. |
 | SQLite creation/reopen from a clean staged folder | NOT YET RECORDED | Required before closing the whole P1 gate. |
 | VST scan/playback | NOT TESTED | Legacy checker is intentionally not staged. |
 | Physical MIDI reconnect/reorder | DEFERRED | Awaiting test hardware. |
