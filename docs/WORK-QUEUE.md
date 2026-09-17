@@ -94,6 +94,9 @@ song, SoundFont, and VST locations ready for smoke testing.
       include an explicit 4/4 event in the synthetic KAR fixture.
 - [x] Keep timed MIDI notes throughout the synthetic fixture so the legacy
       sequencer advances through every lyric boundary.
+- [x] Manually play the staged synthetic KAR `Words`/`FF 01` fixture with
+      SoundFont audio; lyrics advance, short piano notes play, and the app does
+      not hang or exit (Windows x64 maintainer test, 2026-09-17).
 - [ ] Run `stage-smoke` from a Windows Release build and record the result.
 - [ ] Run and record the manual staged NCN, KAR (`FF 05` and `Words/FF 01`),
       SoundFont, language, Safe mode, and Reset settings matrix with authorised
