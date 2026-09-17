@@ -87,3 +87,11 @@ KAR fixtures.
 2. Build an unsigned installer artifact in CI.
 3. Decide publisher certificate, signing process, release channel, and update
    endpoint before enabling auto-update.
+
+
+## Release versioning
+
+The current recovery branch is an alpha line. The first publishable checkpoint
+is planned as `v3.0.0-alpha.1` after the local installer gate passes. The
+full channel progression and version-source-of-truth requirement are defined in
+[Release roadmap](RELEASE-ROADMAP.md).
