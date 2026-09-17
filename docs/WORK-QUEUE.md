@@ -20,6 +20,27 @@ build without a decision.
 **Done when:** the default build never references missing HNK source files and
 the optional path has a documented compatibility decision.
 
+## P0b — HNK3 clean-room successor
+
+**Why:** Legacy HNK reader source is unavailable. HNK3 is a new signed,
+single-song package designed for attribution, tamper detection, and efficient
+loading; it is not a legacy-HNK compatibility effort.
+
+- [x] Record the clean-room format, threat model, integration boundary, and
+      phased delivery plan in `docs/HNK3-RFC.md`.
+- [ ] Approve the first signed-only profile, required metadata, trusted
+      publisher, signing-key storage procedure, and authorised NCN fixtures.
+- [ ] Build standalone parser/writer fixtures before changing HandyKaraoke
+      playback code.
+- [ ] Implement the separate `hnk3-tool` NCN packer and verifier.
+- [ ] Add feature-gated HNK3 library scan and basic playback only after
+      corruption/tamper tests pass.
+- [ ] Consider licensed encryption only as a separate service/product decision.
+
+**Done when:** a signed HNK3 fixture scans and plays through a feature-gated
+reader; modified or malformed packages fail safely without affecting normal
+NCN/KAR playback.
+
 ## P1 — Reproducible Windows x64 build
 
 - [x] Inventory existing build and runtime dependencies in
