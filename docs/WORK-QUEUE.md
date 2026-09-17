@@ -143,7 +143,13 @@ from third-party actions and does not come from the HandyKaraoke compiler.
 
 ## P3 — CI and packaging
 
-- [ ] Replace absolute developer-machine paths in the Inno Setup scripts.
+- [x] Add staged-runtime Inno Setup inputs with no developer-machine paths:
+      `_iss_setup/handykaraoke-stage-x64.iss` and
+      `scripts/Build-Installer.ps1`.
+- [ ] Build and test the first unsigned installer on a clean Windows machine,
+      including install, launch, uninstall, and user-data preservation.
+- [ ] Add the unsigned installer as a CI artifact after the local installer
+      gate passes.
 - [x] Add a Windows GitHub Actions build/test workflow (`windows-recovery.yml`).
 - [x] Produce a staged runtime artifact for push/PR builds (hosted Windows run 16 passed on 2026-09-17).
 - [x] Keep auto-update disabled until signing and endpoint ownership are verified.
