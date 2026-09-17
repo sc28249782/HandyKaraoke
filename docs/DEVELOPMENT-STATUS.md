@@ -1,7 +1,9 @@
 # Development Status
 
 This fork preserves the last public source snapshot of HandyKaraoke and starts
-its maintenance recovery work on branch `feat/build-recovery`.
+its maintenance recovery work on branch `feat/build-recovery`.  The consolidated
+history, technical decisions, architecture, and verification record are in
+[BUILD-RECOVERY-CHANGELOG.md](BUILD-RECOVERY-CHANGELOG.md).
 
 ## Technology inventory
 
