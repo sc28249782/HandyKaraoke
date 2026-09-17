@@ -130,6 +130,17 @@ song, SoundFont, and VST locations ready for smoke testing.
 
 **Done when:** stale MIDI settings cannot prevent the application from starting.
 
+## P3.1 — Compiler warning cleanup
+
+- [x] Return a safe zero speaker flag for an invalid `SpeakerType`.
+- [x] Use safe defaults for invalid Chorus waveform/phase enum values.
+- [x] Make the three raw MIDI controller-byte conversions explicit.
+- [x] Verify a clean MSVC compiler-warning log in GitHub Actions run 28
+      (Windows x64, 2026-09-17).
+
+**Status:** Complete. The remaining GitHub Actions Node 20 warning originates
+from third-party actions and does not come from the HandyKaraoke compiler.
+
 ## P3 — CI and packaging
 
 - [ ] Replace absolute developer-machine paths in the Inno Setup scripts.
