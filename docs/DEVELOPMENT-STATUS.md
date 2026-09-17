@@ -14,7 +14,7 @@ history, technical decisions, architecture, and verification record are in
 | MIDI | WinMM on Windows; RtMidi on Unix | Validate unavailable or changed devices safely |
 | Synth/effects | BASS 2.4 family and SoundFonts | Isolate behind adapters; audit licences before updates |
 | Plug-ins | Windows VST/VSTi path | Treat as optional and untrusted native code |
-| Installer | Inno Setup with absolute local paths | Reproducible packaging from CI |
+| Installer | Inno Setup with absolute local paths | First Windows x64 stage-artifact CI added; installer portability remains P3 |
 | Updates | WinSparkle/appcast references | Disable by default until signing and ownership are verified |
 
 ## Known source and runtime risks
