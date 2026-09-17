@@ -158,6 +158,20 @@ from third-party actions and does not come from the HandyKaraoke compiler.
 from a developer workstation.
 
 
+## P3.2 — Release version control
+
+- [x] Define the `3.0.0-alpha.1` → stable `3.0.0` roadmap and release gates in
+      `docs/RELEASE-ROADMAP.md`.
+- [ ] Add one version manifest used by CMake, installer, resource metadata, and
+      release documentation.
+- [ ] Build and clean-machine test the first staged-runtime installer.
+- [ ] Tag `v3.0.0-alpha.1` and publish it as a prerelease only after the
+      installer gate passes.
+
+**Done when:** every release uses one version source, a unique immutable tag,
+and the documented channel-specific quality gates.
+
+
 ## P4a — BASS stack refresh
 
 - [x] Record the compatible BASS/BASSMIDI/BASSmix/BASS FX target versions,
