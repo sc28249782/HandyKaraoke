@@ -28,8 +28,8 @@ cmake --build build\msvc-x64-release --target stage-fixture
 
 It writes `KAR-Words-FF01-Regression.kar` under the staged `Songs\KAR`
 folder. The file has no commercial music or lyrics: it contains only three
-short test lines, both `\\` and `/` markers, and one brief synthetic MIDI
-note to exercise normal playback.
+short test lines, both `\\` and `/` markers, and short synthetic MIDI notes
+throughout the lyric timeline to exercise normal playback.
 
 Run the staged executable after the static check passes and the fixture exists:
 
