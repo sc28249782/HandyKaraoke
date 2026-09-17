@@ -71,3 +71,28 @@ Commit the refreshed SDK files only after these gates pass locally, then confirm
 ## Completion criteria
 
 P4a is complete only when the approved SDK files are committed together, the local stage checks and manual audio regression checks pass, and CI passes. Preparation of this document and script alone is not an SDK upgrade.
+
+## Execution record — 2026-09-17
+
+A Windows x64 maintainer applied the refresh with
+`Refresh-BassSdk.ps1 -Apply`. The pre-refresh files were retained at
+`build\\vendor-backups\\bass-stack-20260917-203818`.
+
+The repository diff contains updated BASS, BASSMIDI, and BASSmix headers,
+x64 import libraries, and x64 DLLs, plus the BASS FX x64 DLL. The BASS FX
+header and import library were validated from the official package but were
+byte-identical to the repository copies and therefore do not appear as changed.
+BASS_VST remains at 2.4.1.
+
+Local verification passed:
+
+- Release CMake configure;
+- `stage-smoke`, including the staged runtime manifest;
+- `stage-fixture`, which generated both synthetic KAR fixtures; and
+- staged NCN/MIDI + SoundFont playback, KAR `FF 01` / `FF 05` lyrics, and
+  tempo/transpose controls.
+
+The remaining release gate is to commit the binary changes from the Windows
+worktree, push them to this branch, and confirm the GitHub Actions Windows
+workflow. The BASS distribution/licence decision must also be recorded before
+publishing a binary release.
