@@ -192,7 +192,7 @@ is documentation only.
 | Real KAR `Words` / `FF 01` | PASS | Lyrics advanced after the parser fix. The supplied commercial file is not a repository fixture. |
 | Synthetic KAR `Words` / `FF 01` | PASS | Text advanced, short piano notes were heard, and the application neither hung nor exited. |
 | KAR `FF 05` fixture | PASS | Synthetic staged fixture showed advancing lyrics and piano notes; no hang or exit (maintainer test, 2026-09-17). |
-| SQLite creation/reopen from a clean staged folder | NOT YET RECORDED | Required before closing the whole P1 gate. |
+| SQLite creation/reopen from a clean staged folder | PASS | Isolated `stage\\HandyKaraoke\\Data\\Database.db3` created (28,672 bytes), had the `SQLite format 3` header and `songs`/`miscellaneous` tables, then reopened without error (maintainer test, 2026-09-17). |
 | VST scan/playback | NOT TESTED | Legacy checker is intentionally not staged. |
 | Physical MIDI reconnect/reorder | DEFERRED | Awaiting test hardware. |
 
