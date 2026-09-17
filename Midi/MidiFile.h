@@ -78,6 +78,7 @@ private:
     QVector<MidiEvent*> fEvents;
     QVector<MidiEvent*> fTempoEvents;
     QVector<MidiEvent*> fLyricsEvents;
+    QVector<MidiEvent*> fTextEvents;
     QVector<MidiEvent*> fControllerEvents;
     QVector<MidiEvent*> fProgramChangeEvents;
     QVector<MidiEvent*> fTimeSignatureEvents;
