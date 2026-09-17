@@ -88,6 +88,8 @@ song, SoundFont, and VST locations ready for smoke testing.
       matrix in `docs/P1C-RELEASE-QUALITY-GATE.md`.
 - [x] Add a generator for a synthetic, redistributable KAR `Words`/`FF 01`
       fixture; it is created only inside the staged test folder.
+- [x] Ignore Meta/SysEx records in MIDI output dispatch; these events have no
+      MIDI channel and previously could access the channel mixer out of bounds.
 - [ ] Run `stage-smoke` from a Windows Release build and record the result.
 - [ ] Run and record the manual staged NCN, KAR (`FF 05` and `Words/FF 01`),
       SoundFont, language, Safe mode, and Reset settings matrix with authorised
