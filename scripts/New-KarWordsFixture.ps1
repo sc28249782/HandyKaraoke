@@ -64,6 +64,18 @@ function Add-MetaText {
     Add-Bytes -Target $Track -Bytes $textBytes
 }
 
+function Add-ChannelEvent {
+    param(
+        [System.Collections.Generic.List[byte]]$Track,
+        [uint32]$Delta,
+        [byte]$Status,
+        [byte]$Data1,
+        [byte]$Data2
+    )
+    Add-VariableLength -Target $Track -Value $Delta
+    Add-Bytes -Target $Track -Bytes ([byte[]]($Status, $Data1, $Data2))
+}
+
 function Add-EndOfTrack {
     param(
         [System.Collections.Generic.List[byte]]$Track,
@@ -104,12 +116,20 @@ Add-MetaText -Track $wordsTrack -Delta 384 -MetaType 0x01 -Text '\Third line'
 Add-MetaText -Track $wordsTrack -Delta 384 -MetaType 0x01 -Text ' finish'
 Add-EndOfTrack -Track $wordsTrack -Delta 768
 
+$musicTrack = [System.Collections.Generic.List[byte]]::new()
+Add-MetaText -Track $musicTrack -Delta 0 -MetaType 0x03 -Text 'Regression tone'
+Add-ChannelEvent -Track $musicTrack -Delta 0 -Status 0xc0 -Data1 0x00 -Data2 0x00
+Add-ChannelEvent -Track $musicTrack -Delta 0 -Status 0x90 -Data1 0x3c -Data2 0x40
+Add-ChannelEvent -Track $musicTrack -Delta 192 -Status 0x80 -Data1 0x3c -Data2 0x00
+Add-EndOfTrack -Track $musicTrack -Delta 1728
+
 $file = [System.Collections.Generic.List[byte]]::new()
 Add-Ascii -Target $file -Text 'MThd'
 Add-UInt32BE -Target $file -Value 6
-Add-Bytes -Target $file -Bytes ([byte[]](0x00, 0x01, 0x00, 0x02, 0x00, 0x60))
+Add-Bytes -Target $file -Bytes ([byte[]](0x00, 0x01, 0x00, 0x03, 0x00, 0x60))
 Add-TrackChunk -File $file -Track $headerTrack
 Add-TrackChunk -File $file -Track $wordsTrack
+Add-TrackChunk -File $file -Track $musicTrack
 
 [System.IO.File]::WriteAllBytes($output, $file.ToArray())
 Write-Host "Created KAR Words/FF 01 regression fixture: $output" -ForegroundColor Green
