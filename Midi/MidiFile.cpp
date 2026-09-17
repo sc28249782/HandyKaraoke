@@ -308,7 +308,7 @@ bool MidiFile::read(QFile *in, bool seekFileChunkID)
                 continue; // KARA metadata such as @T title and @I information.
 
             for (const QChar chr : text) {
-                if (chr == QLatin1Char('\\\\') || chr == QLatin1Char('/')) {
+                if (chr == QLatin1Char('\\') || chr == QLatin1Char('/')) {
                     // KARA line markers consume one cursor position, just as a
                     // newline does in LyricsWidget.
                     if (!fLyrics.isEmpty() && !fLyrics.endsWith(QLatin1Char('\n'))) {
