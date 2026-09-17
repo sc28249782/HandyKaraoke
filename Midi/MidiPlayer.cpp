@@ -742,15 +742,27 @@ void MidiPlayer::unloadNextMedley()
 
 void MidiPlayer::sendEvent(MidiEvent e)
 {
+    // Sequencer events include Meta and SysEx records.  They do not have a MIDI
+    // channel and must never be indexed through the 16-channel mixer.
+    if (e.eventType() == MidiEventType::Meta
+        || e.eventType() == MidiEventType::SysEx
+        || e.eventType() == MidiEventType::Invalid) {
+        return;
+    }
+
+    const int channel = e.channel();
+    if (channel < 0 || channel >= _midiChannels.size())
+        return;
+
     _playingEventPtr = &e;
 
     if (e.eventType() == MidiEventType::Controller
         || e.eventType() == MidiEventType::ProgramChange) {
         sendEventToDevices(e);
     } else {
-        if (_midiChannels[e.channel()].isMute() == false) {
+        if (_midiChannels[channel].isMute() == false) {
             if (_useSolo) {
-                if (_midiChannels[e.channel()].isSolo()) {
+                if (_midiChannels[channel].isSolo()) {
                     sendEventToDevices(e);
                 }
             } else {
