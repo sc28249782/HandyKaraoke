@@ -122,6 +122,7 @@ $stage = (Resolve-Path -LiteralPath $StageDir).Path
 $outputDirectory = Join-Path $stage 'Songs\KAR'
 New-Item -ItemType Directory -Force -Path $outputDirectory | Out-Null
 $output = Join-Path $outputDirectory 'KAR-Words-FF01-Regression.kar'
+$lyricsOutput = Join-Path $outputDirectory 'KAR-Lyrics-FF05-Regression.kar'
 
 $headerTrack = [System.Collections.Generic.List[byte]]::new()
 Add-MetaText -Track $headerTrack -Delta 0 -MetaType 0x03 -Text 'Soft Karaoke'
@@ -139,6 +140,14 @@ Add-MetaText -Track $wordsTrack -Delta 384 -MetaType 0x01 -Text '/Second line'
 Add-MetaText -Track $wordsTrack -Delta 384 -MetaType 0x01 -Text '\Third line'
 Add-MetaText -Track $wordsTrack -Delta 384 -MetaType 0x01 -Text ' finish'
 Add-EndOfTrack -Track $wordsTrack -Delta 768
+
+$lyricsTrack = [System.Collections.Generic.List[byte]]::new()
+Add-MetaText -Track $lyricsTrack -Delta 0 -MetaType 0x03 -Text 'Lyrics'
+Add-MetaText -Track $lyricsTrack -Delta 0 -MetaType 0x05 -Text '\\FF05 lyric test'
+Add-MetaText -Track $lyricsTrack -Delta 384 -MetaType 0x05 -Text '/Second lyric'
+Add-MetaText -Track $lyricsTrack -Delta 384 -MetaType 0x05 -Text '\\Third lyric'
+Add-MetaText -Track $lyricsTrack -Delta 384 -MetaType 0x05 -Text ' end'
+Add-EndOfTrack -Track $lyricsTrack -Delta 768
 
 $musicTrack = [System.Collections.Generic.List[byte]]::new()
 Add-MetaText -Track $musicTrack -Delta 0 -MetaType 0x03 -Text 'Regression tone'
@@ -168,4 +177,15 @@ Add-TrackChunk -File $file -Track $wordsTrack
 Add-TrackChunk -File $file -Track $musicTrack
 
 [System.IO.File]::WriteAllBytes($output, $file.ToArray())
+
+$lyricsFile = [System.Collections.Generic.List[byte]]::new()
+Add-Ascii -Target $lyricsFile -Text 'MThd'
+Add-UInt32BE -Target $lyricsFile -Value 6
+Add-Bytes -Target $lyricsFile -Bytes ([byte[]](0x00, 0x01, 0x00, 0x03, 0x00, 0x60))
+Add-TrackChunk -File $lyricsFile -Track $headerTrack
+Add-TrackChunk -File $lyricsFile -Track $lyricsTrack
+Add-TrackChunk -File $lyricsFile -Track $musicTrack
+[System.IO.File]::WriteAllBytes($lyricsOutput, $lyricsFile.ToArray())
+
 Write-Host "Created KAR Words/FF 01 regression fixture: $output" -ForegroundColor Green
+Write-Host "Created KAR Lyrics/FF 05 regression fixture: $lyricsOutput" -ForegroundColor Green
