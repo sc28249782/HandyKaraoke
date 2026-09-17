@@ -101,7 +101,7 @@ song, SoundFont, and VST locations ready for smoke testing.
 - [ ] Run and record the manual staged NCN, KAR (`FF 05` and `Words/FF 01`),
       SoundFont, language, Safe mode, and Reset settings matrix with authorised
       fixtures.
-- [ ] Resolve the remaining `DialogHelper` missing-return compiler warnings.
+- [x] Resolve the `DialogHelper` missing-return compiler warnings by returning an empty string for an invalid speaker enum value.
 
 **Done when:** the static stage test and all applicable manual tests pass from
 `build\\msvc-x64-release\\stage\\HandyKaraoke`.
