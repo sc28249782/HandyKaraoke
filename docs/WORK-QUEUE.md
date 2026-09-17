@@ -158,10 +158,14 @@ from a developer workstation.
       licence gate, update script, and regression procedure in
       `docs/P4A-BASS-STACK-REFRESH.md`.
 - [ ] Confirm the intended distribution complies with the current BASS licence.
-- [ ] Apply the matching header, x64 import-library, and x64 DLL update as one
-      atomic stack; retain BASS_VST 2.4.1.
-- [ ] Pass the Release stage checks, manual MIDI/SoundFont/KAR regression
-      matrix, and the GitHub Actions Windows workflow after the binary update.
+- [x] Apply the matching BASS/BASSMIDI/BASSmix header, x64 import-library,
+      and x64 DLL update plus the BASS FX runtime DLL; retain BASS_VST 2.4.1
+      (Windows x64 maintainer test, 2026-09-17).
+- [x] Pass Release `stage-smoke`, `stage-fixture`, and the manual
+      MIDI/SoundFont/KAR regression matrix after the binary update
+      (Windows x64 maintainer test, 2026-09-17).
+- [ ] Commit and push the refreshed binary files, then pass the GitHub Actions
+      Windows workflow against those exact binaries.
 
 **Done when:** the approved BASS SDK binaries are committed together and all
 local and CI release gates pass.
