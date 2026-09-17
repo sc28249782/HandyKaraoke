@@ -36,3 +36,10 @@ history, technical decisions, architecture, and verification record are in
 - Never use real copyrighted songs as repository fixtures.
 - Changes to parsers and audio code require regression tests with legal fixtures.
 - Treat HNK parsing as a separate legal and technical workstream.
+
+
+## Release roadmap
+
+The active recovery branch remains a prerelease line. See
+[Release roadmap](RELEASE-ROADMAP.md) for the `3.0.0-alpha.1` through `3.0.0`
+quality gates and the explicit out-of-scope boundary.
