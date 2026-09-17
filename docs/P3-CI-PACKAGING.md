@@ -50,11 +50,22 @@ CI does not launch the GUI: hosted Windows runners have no reliable audio,
 MIDI, display, SoundFont, or VST environment.  Launch/playback verification
 remains the documented manual P1c gate.
 
+## Second delivery: reproducible local installer
+
+The repository now contains `_iss_setup/handykaraoke-stage-x64.iss` and
+`scripts/Build-Installer.ps1`. They replace the release path only: the
+existing `handy-x64.iss` remains historical reference and must not be used for
+new releases.
+
+The new installer receives its source stage and output directory as explicit
+Inno Setup parameters. It packages only the clean stage that `stage-smoke`
+has verified, preserves user media/data folders on uninstall, and displays the
+GPLv3 plus the official non-commercial binary-release policy. See
+[P3 installer packaging](P3-INSTALLER-PACKAGING.md) for the command and
+clean-machine test gate.
+
 ## Deliberately out of scope
 
-- An Inno Setup installer is not generated yet.  Its scripts still contain
-  former-workstation paths and must first be converted to repository-relative
-  inputs.
 - The Visual C++ Redistributable, code signing, publisher identity,
   installer upgrade semantics, and clean-VM installer launch test are separate
   packaging work.
@@ -72,9 +83,7 @@ KAR fixtures.
 
 ## Next P3 increments
 
-1. Make the Inno Setup inputs relative and fail clearly when required release
-   inputs are absent.
+1. Build and test the first unsigned local installer on a clean Windows VM.
 2. Build an unsigned installer artifact in CI.
-3. Test installer install/launch/uninstall in a clean Windows VM.
-4. Decide publisher certificate, signing process, release channel, and update
+3. Decide publisher certificate, signing process, release channel, and update
    endpoint before enabling auto-update.
