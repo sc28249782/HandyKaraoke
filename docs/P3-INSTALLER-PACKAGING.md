@@ -94,3 +94,10 @@ apps/Programs and Features entry used the generic uninstaller icon because the
 script lacked `UninstallDisplayIcon`. The installer now explicitly uses the
 installed `HandyKaraoke.exe` as its uninstall display icon; rebuild and
 reinstall once to refresh that Windows registry entry.
+
+
+## Installed apps icon result — 2026-09-18
+
+After rebuilding with `UninstallDisplayIcon={app}\\HandyKaraoke.exe` and
+installing again, the maintainer confirmed that Windows Installed apps displays
+the HandyKaraoke icon correctly.
