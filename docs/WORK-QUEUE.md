@@ -146,8 +146,10 @@ from third-party actions and does not come from the HandyKaraoke compiler.
 - [x] Add staged-runtime Inno Setup inputs with no developer-machine paths:
       `_iss_setup/handykaraoke-stage-x64.iss` and
       `scripts/Build-Installer.ps1`.
-- [ ] Build and test the first unsigned installer on a clean Windows machine,
-      including install, launch, uninstall, and user-data preservation.
+- [x] Build and install/launch the first unsigned staged-runtime installer
+      locally (Windows x64 maintainer test, 2026-09-18).
+- [ ] Test the unsigned installer on a clean Windows machine, including
+      uninstall, reinstall, and user-data preservation.
 - [ ] Add the unsigned installer as a CI artifact after the local installer
       gate passes.
 - [x] Add a Windows GitHub Actions build/test workflow (`windows-recovery.yml`).
