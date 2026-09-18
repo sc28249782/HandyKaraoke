@@ -190,7 +190,7 @@ repository.
   6/7 installs, including the winget per-user Inno Setup 7 location.
 - On 2026-09-18, the Windows x64 maintainer produced an unsigned installer,
   installed it, and confirmed it behaves like the tested staged runtime.
-- A clean-machine/VM uninstall and reinstall preservation test remains pending.
+- The maintainer verified install, launch, user-data creation, uninstall, data/media retention, reinstall, and relaunch locally on 2026-09-18. A separate clean-machine/VM repetition remains pending.
 
 ## Current architecture
 
