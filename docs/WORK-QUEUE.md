@@ -148,8 +148,10 @@ from third-party actions and does not come from the HandyKaraoke compiler.
       `scripts/Build-Installer.ps1`.
 - [x] Build and install/launch the first unsigned staged-runtime installer
       locally (Windows x64 maintainer test, 2026-09-18).
-- [ ] Test the unsigned installer on a clean Windows machine, including
-      uninstall, reinstall, and user-data preservation.
+- [x] Verify local install, launch, user-data creation, uninstall, retention
+      of `Data`/`Songs`/`SoundFonts`/`VST`, reinstall, and relaunch
+      (Windows x64 maintainer test, 2026-09-18).
+- [ ] Repeat the installer cycle on a clean Windows machine or isolated VM.
 - [ ] Add the unsigned installer as a CI artifact after the local installer
       gate passes.
 - [x] Add a Windows GitHub Actions build/test workflow (`windows-recovery.yml`).
