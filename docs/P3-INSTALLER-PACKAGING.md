@@ -80,3 +80,17 @@ and launched with behaviour equivalent to the verified staged runtime.
 This proves the local build/install/launch path. The remaining gate is a clean
 machine (or isolated VM) install, uninstall, and reinstall test, including
 confirmation that user data and media are retained as documented.
+
+
+## Install/uninstall/reinstall result — 2026-09-18
+
+The Windows x64 maintainer completed the full local installer cycle: install,
+launch and verify MIDI/SoundFont/KAR, create small user data, uninstall, verify
+that `Data`, `Songs`, `SoundFonts`, and `VST` remain, then reinstall and
+launch again. Playback remained normal and the earlier user data was retained.
+
+The installer executable carries the application icon. The initial Installed
+apps/Programs and Features entry used the generic uninstaller icon because the
+script lacked `UninstallDisplayIcon`. The installer now explicitly uses the
+installed `HandyKaraoke.exe` as its uninstall display icon; rebuild and
+reinstall once to refresh that Windows registry entry.
