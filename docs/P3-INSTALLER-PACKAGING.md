@@ -68,3 +68,15 @@ Before publishing an installer, verify a clean Windows test machine:
 ## CI follow-up
 
 The current GitHub Actions workflow publishes the staged runtime artifact. Adding Inno Setup to hosted CI and uploading the installer is a follow-up after a maintainer has produced and tested the first local installer.
+
+
+## First local installer result
+
+On 2026-09-18, the Windows x64 maintainer built the installer with
+`scripts\\Build-Installer.ps1` using Inno Setup 7.1.0. The installer was
+created below `build\\msvc-x64-release\\package`, installed successfully,
+and launched with behaviour equivalent to the verified staged runtime.
+
+This proves the local build/install/launch path. The remaining gate is a clean
+machine (or isolated VM) install, uninstall, and reinstall test, including
+confirmation that user data and media are retained as documented.
