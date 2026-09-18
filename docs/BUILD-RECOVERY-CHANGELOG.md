@@ -181,6 +181,17 @@ repository.
   recovery build run 51 on 2026-09-17, including staged validation, fixture
   generation, and artifact upload.
 
+### 7. P3 installer packaging — local validation
+
+- Replaced the release build route with a staged-runtime Inno Setup script and
+  a PowerShell driver that first runs `stage-smoke`.
+- The new script takes explicit stage/output paths and never uses the former
+  workstation-specific paths. It supports machine-wide and per-user Inno Setup
+  6/7 installs, including the winget per-user Inno Setup 7 location.
+- On 2026-09-18, the Windows x64 maintainer produced an unsigned installer,
+  installed it, and confirmed it behaves like the tested staged runtime.
+- A clean-machine/VM uninstall and reinstall preservation test remains pending.
+
 ## Current architecture
 
 ```mermaid
