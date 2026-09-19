@@ -1,0 +1,112 @@
+# P1c — Release Quality Gate
+
+This gate verifies the packaged runtime that users execute, not the development
+binary in a build directory. It deliberately does not copy songs, SoundFonts,
+or VST plug-ins into the repository or staged package.
+
+## 1. Build and validate the stage
+
+Open a Visual Studio Developer Command Prompt in the repository root.
+
+```bat
+cmake -S . -B build\msvc-x64-release
+cmake --build build\msvc-x64-release --target stage-smoke --parallel
+```
+
+The command first builds the Release executable, creates
+`build\msvc-x64-release\stage\HandyKaraoke`, and then checks its runtime
+manifest. The static check fails if a required Qt/BASS DLL, plug-in, recovery
+launcher, language file, SQLite driver, or expected empty media directory is
+missing.
+
+Create the synthetic, redistributable KAR regression fixtures before the KAR
+`FF 05` and `Words`/`FF 01` tests:
+
+```bat
+cmake --build build\msvc-x64-release --target stage-fixture
+```
+
+It writes two files under the staged `Songs\\KAR` folder:
+
+- `KAR-Words-FF01-Regression.kar`: text events (`FF 01`) in a `Words` track.
+- `KAR-Lyrics-FF05-Regression.kar`: standard lyric events (`FF 05`).
+
+Neither has commercial music or lyrics. Each contains short test lines,
+`\\` and `/` markers, Program Change `C0 00` (piano), and synthetic MIDI
+notes throughout the lyric timeline.
+
+Run the staged executable after the static check passes and the fixture exists:
+
+```bat
+build\msvc-x64-release\stage\HandyKaraoke\HandyKaraoke.exe
+```
+
+For a package-layout check without building, run:
+
+```bat
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts\Test-StageRuntime.ps1 -StageDir build\msvc-x64-release\stage\HandyKaraoke
+```
+
+## 2. Manual playback matrix
+
+Use only fixtures that the tester is entitled to use. Do not commit commercial
+songs, SoundFonts, or VST plug-ins to this repository.
+
+| Check | Expected result |
+|---|---|
+| Fresh launch with no MIDI hardware | Starts with SoundFont/None fallback; no startup error |
+| SQLite song database | Opens, creates/updates the song database, and restarts successfully — **PASS** with an isolated staged `Data\\Database.db3`; verified header and tables, scanned the two generated KAR fixtures into two rows, then reopened without error (Windows x64 maintainer test, 2026-09-17) |
+| Language | Thai and English both switch without relaunch |
+| NCN | Scan and play MIDI, lyric, and cursor data correctly |
+| KAR with MIDI lyric events (`FF 05`) | Lyric text appears and advances with playback — **PASS** on the staged synthetic fixture (Windows x64 maintainer test, 2026-09-17) |
+| KAR with a `Words`/`Lyrics` text track (`FF 01`) | Text appears; `\\` and `/` line markers advance to a new line |
+| SoundFont | Built-in MIDI Synthesizer produces audio through the selected output |
+| Safe mode | `HandyKaraoke-SafeMode.cmd` launches with recoverable defaults |
+| Reset settings | `HandyKaraoke-ResetSettings.cmd` restores settings while preserving the song database |
+| Staged relink | Close the app, rerun `stage-smoke`, and verify that no executable/DLL lock prevents the build |
+
+Record the fixture provenance, Windows/Qt version, audio device, and any
+failure in the execution log below.
+
+## 3. Execution log template
+
+```text
+Date:
+Commit:
+Windows edition/build:
+Visual Studio / MSVC:
+Qt kit:
+Stage path:
+MIDI hardware present:
+Audio output:
+Fixtures and redistribution rights:
+Static stage-smoke result: PASS / FAIL
+Manual matrix result: PASS / FAIL
+Notes or defects:
+```
+
+## 4. Recorded P1c result
+
+| Field | Recorded value |
+| --- | --- |
+| Date | 2026-09-17 |
+| Environment | Windows 11 x64, Visual Studio 2022 / MSVC 14.44, Qt 5.15.2 `msvc2019_64` |
+| Stage path | `build\\msvc-x64-release\\stage\\HandyKaraoke` |
+| Static stage manifest | **PASS** — `stage-smoke` completed with the required runtime layout |
+| Playback | **PASS** — NCN/MIDI SoundFont, KAR `FF 01`, and KAR `FF 05` |
+| Recovery | **PASS** — stale/no MIDI settings, Safe Mode, Reset Settings |
+| SQLite | **PASS** — isolated staged database created, reopened, and contained two generated KAR rows |
+| Deferred | VST scanning/playback and physical MIDI reconnect/reorder |
+
+## Status
+
+**Complete (2026-09-17).** The static stage manifest and all applicable
+Windows staged manual checks passed. VST and physical-MIDI hardware validation
+remain deferred P2/P3 work, not blockers for this recovery gate.
+
+## Exit rule
+
+P1c passes only when `stage-smoke` passes and every applicable manual matrix
+item is recorded as passed on a clean staged folder. A failed optional item,
+such as a VST plug-in not supplied for the test, must be marked **not tested**
+rather than silently treated as passed.

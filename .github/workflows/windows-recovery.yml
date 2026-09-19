@@ -1,0 +1,54 @@
+name: Windows x64 recovery build
+
+on:
+  push:
+    branches:
+      - feat/build-recovery
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-stage:
+    name: Build and stage (Windows x64)
+    runs-on: windows-2022
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Enable MSVC x64 build environment
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+
+      - name: Install Qt 5.15.2 MSVC x64
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '5.15.2'
+          arch: 'win64_msvc2019_64'
+
+      - name: Configure
+        shell: pwsh
+        run: >
+          cmake -S . -B build/ci-x64 -G Ninja
+          -DCMAKE_BUILD_TYPE=Release
+          "-DQt5_DIR=$env:Qt5_DIR"
+
+      - name: Build and validate staged runtime
+        shell: pwsh
+        run: cmake --build build/ci-x64 --target stage-smoke --parallel
+
+      - name: Generate legal KAR regression fixtures
+        shell: pwsh
+        run: cmake --build build/ci-x64 --target stage-fixture --parallel
+
+      - name: Upload staged runtime artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: HandyKaraoke-windows-x64-stage
+          path: build/ci-x64/stage/HandyKaraoke
+          if-no-files-found: error
+          retention-days: 14

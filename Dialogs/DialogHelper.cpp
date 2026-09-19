@@ -39,6 +39,8 @@ QString DialogHelper::getSpeakerName(SpeakerType sp)
     case SpeakerType::SideRight:
         return "Mono Side Right (SR)";
     }
+
+    return QString();
 }
 
 QString DialogHelper::getSpeakerIconName(SpeakerType sp)
@@ -76,6 +78,8 @@ QString DialogHelper::getSpeakerIconName(SpeakerType sp)
     case SpeakerType::SideRight:
         return ":/Icons/SoundCard/ports/port-side-right.png";
     }
+
+    return QString();
 }
 
 QString DialogHelper::getSpeakerSmallIconName(SpeakerType sp)
@@ -113,6 +117,8 @@ QString DialogHelper::getSpeakerSmallIconName(SpeakerType sp)
     case SpeakerType::SideRight:
         return ":/Icons/SoundCard/ports-small/port-sm-side-right.png";
     }
+
+    return QString();
 }
 
 void DialogHelper::createSpeakerMenu(QMenu *menu, QSignalMapper *sigMapper, int deviceNumber)

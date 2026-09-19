@@ -48,7 +48,7 @@ MidiSynthesizer::MidiSynthesizer(QObject *parent) : QObject(parent)
     }
 
     #ifndef __linux__
-    BASS_VST_INFO vstinfo;
+    BASS_VST_INFO vstinfo = {};
     for (int i=0; i<4; i++)
     {
         mVstiFiles[i] = "";
@@ -695,7 +695,11 @@ void MidiSynthesizer::sendController(int ch, int number, int value)
     default:
         if (ch < 0 || ch > 15)
             return;
-        BYTE data[3] = { (0xB0 | ch), (number & 0x7F), (value & 0x7F) };
+        BYTE data[3] = {
+            static_cast<BYTE>(0xB0 | ch),
+            static_cast<BYTE>(number & 0x7F),
+            static_cast<BYTE>(value & 0x7F)
+        };
         //qDebug() << (data[0] & 0xF0) << "  " << (data[0] & 0x0F) << "  " << data[1] << "  " << data[2];
         for (int i=0; i<HANDLE_MIDI_COUNT; i++) {
             HSTREAM h = handles[static_cast<InstrumentType>(i)];

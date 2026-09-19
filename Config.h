@@ -40,6 +40,14 @@ public:
     static QString CONFIG_SYNTH_FILE_PATH;
 
     static void initConfigDataPath();
+
+    // Safe mode never reads or changes the user's normal configuration.
+    static void enableSafeMode();
+
+    // Moves normal configuration files to a timestamped backup folder. Song
+    // data and the SQLite database are deliberately preserved.
+    static bool resetSettings(QString *backupDirectory = nullptr,
+                              QString *errorMessage = nullptr);
 };
 
 #endif // CONFIG_H

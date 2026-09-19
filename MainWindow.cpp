@@ -16,7 +16,9 @@
 #include "DrumPadsKey.h"
 #include "SettingsDialog.h"
 #include "Midi/MidiFile.h"
+#ifdef HANDYKARAOKE_ENABLE_HNK
 #include "Midi/HNKFile.h"
+#endif
 #include "Dialogs/AboutDialog.h"
 #include "Dialogs/MapSoundfontDialog.h"
 #include "Dialogs/MapChannelDialog.h"
@@ -31,6 +33,32 @@
 #ifndef __linux__
 #include "Dialogs/VSTDirsDialog.h"
 #endif
+
+namespace {
+const QString kMidiSynthesizerSetting = "__HANDYKARAOKE_SOUNDFONT__";
+const QString kNoMidiInputSetting = "__HANDYKARAOKE_NO_MIDI_INPUT__";
+
+int midiPortForSavedName(const QString &savedName, const QStringList &devices,
+                         const QString &specialName, bool *found)
+{
+    if (savedName == specialName) {
+        *found = true;
+        return -1;
+    }
+
+    const int port = devices.indexOf(savedName);
+    *found = port >= 0;
+    return port;
+}
+
+QString savedMidiPortName(int port, const QStringList &devices,
+                          const QString &specialName)
+{
+    if (port < 0 || port >= devices.size())
+        return specialName;
+    return devices.at(port);
+}
+}
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -175,8 +203,29 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     { // Player
-        int oPort   = settings->value("MidiOut", 0).toInt();
-        int iPort   = settings->value("MidiIn", -1).toInt();
+        const QStringList midiOutDevices = MidiPlayer::midiDevices();
+        const QStringList midiInDevices = MidiPlayer::midiInDevices();
+
+        int oPort = settings->value("MidiOut", 0).toInt();
+        if (settings->contains("MidiOutName")) {
+            bool found = false;
+            oPort = midiPortForSavedName(settings->value("MidiOutName").toString(),
+                                         midiOutDevices, kMidiSynthesizerSetting,
+                                         &found);
+            if (!found)
+                oPort = -1;
+        }
+
+        int iPort = settings->value("MidiIn", -1).toInt();
+        if (settings->contains("MidiInName")) {
+            bool found = false;
+            iPort = midiPortForSavedName(settings->value("MidiInName").toString(),
+                                         midiInDevices, kNoMidiInputSetting,
+                                         &found);
+            if (!found)
+                iPort = -1;
+        }
+
         int vl      = settings->value("MidiVolume", 50).toInt();
         bool lDrum  = settings->value("MidiLockDrum", false).toBool();
         bool lSnare = settings->value("MidiLockSnare", false).toBool();
@@ -184,8 +233,27 @@ MainWindow::MainWindow(QWidget *parent) :
         int synBuf  = settings->value("SynthBuffer", 100).toInt();
 
         BASS_SetConfig(BASS_CONFIG_BUFFER, synBuf);
-        player->setMidiOut(oPort);
-        player->setMidiIn(iPort);
+
+        // Device numbers are volatile. If a saved device is gone or fails to
+        // open, keep startup usable by falling back to SoundFont/None.
+        if (!player->setMidiOut(oPort)) {
+            player->setMidiOut(-1);
+        }
+        settings->setValue("MidiOut", player->midiOutPortNumber());
+        settings->setValue("MidiOutName",
+                           savedMidiPortName(player->midiOutPortNumber(),
+                                             midiOutDevices,
+                                             kMidiSynthesizerSetting));
+
+        if (!player->setMidiIn(iPort)) {
+            player->setMidiIn(-1);
+        }
+        settings->setValue("MidiIn", player->midiInPortNumber());
+        settings->setValue("MidiInName",
+                           savedMidiPortName(player->midiInPortNumber(),
+                                             midiInDevices,
+                                             kNoMidiInputSetting));
+
         player->setVolume(vl);
 
         if (lDrum) {
@@ -201,12 +269,38 @@ MainWindow::MainWindow(QWidget *parent) :
             player->setLockBass(true, lbNum);
         }
 
-        // Midi Channel Mapper
+        // MIDI Channel Mapper. New settings store names so that a USB
+        // device changing order cannot silently redirect a channel.
         QList<int> ports = settings->value("MidiChannelMapper").value<QList<int>>();
+        const QStringList savedPortNames =
+                settings->value("MidiChannelMapperNames").toStringList();
         if (ports.count() == 16) {
+            QList<int> recoveredPorts;
+            QStringList recoveredPortNames;
             for (int i=0; i<16; i++) {
-                player->setMapChannelOutput(i, ports[i]);
+                int port = ports.at(i);
+                if (savedPortNames.count() == 16) {
+                    bool found = false;
+                    port = midiPortForSavedName(savedPortNames.at(i),
+                                                midiOutDevices,
+                                                kMidiSynthesizerSetting,
+                                                &found);
+                    if (!found)
+                        port = -1;
+                } else if (port < -1 || port >= midiOutDevices.count()) {
+                    port = -1;
+                }
+
+                player->setMapChannelOutput(i, port);
+                const int activePort = player->midiChannel()[i].port();
+                recoveredPorts.append(activePort);
+                recoveredPortNames.append(
+                            savedMidiPortName(activePort, midiOutDevices,
+                                              kMidiSynthesizerSetting));
             }
+            settings->setValue("MidiChannelMapper",
+                               QVariant::fromValue(recoveredPorts));
+            settings->setValue("MidiChannelMapperNames", recoveredPortNames);
         }
 
         connect(player, SIGNAL(finished()), this, SLOT(onPlayerThreadFinished()));
@@ -551,6 +645,7 @@ void MainWindow::play(int index, int position)
             Utils::readCurFile(curPath, player->midiFile()->resorution()));
 
     }
+#ifdef HANDYKARAOKE_ENABLE_HNK
     else if (playingSong.songType() == "HNK")
     {
         // HNK File
@@ -582,6 +677,15 @@ void MainWindow::play(int index, int position)
             Utils::readCurFile(HNKFile::curData(p), player->midiFile()->resorution()));
 
     }
+#else
+    else if (playingSong.songType() == "HNK")
+    {
+        QMessageBox::information(this, tr("ยังไม่รองรับไฟล์ HNK"),
+                                 tr("HNK เป็นความสามารถเสริมและยังไม่ได้เปิดใช้ในรุ่นนี้."),
+                                 QMessageBox::Ok);
+        return;
+    }
+#endif
     else if (playingSong.songType() == "KAR")
     {
         // KAR file
@@ -1707,6 +1811,7 @@ void MainWindow::setThaiLang()
         return;
 
     if (QApplication::removeTranslator(&translator)) {
+        ui->retranslateUi(this);
         QApplication::processEvents();
         currentLang = "th";
         settings->setValue("Language", currentLang);
@@ -1722,6 +1827,7 @@ void MainWindow::setEngLang()
 
     if (translator.load(path)) {
         QApplication::installTranslator(&translator);
+        ui->retranslateUi(this);
         QApplication::processEvents();
         currentLang = "en";
         settings->setValue("Language", currentLang);

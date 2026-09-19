@@ -7,6 +7,10 @@
 #include <QMenu>
 #include <QSettings>
 
+namespace {
+const QString kMidiSynthesizerSetting = "__HANDYKARAOKE_SOUNDFONT__";
+}
+
 
 MapChannelDialog::MapChannelDialog(QWidget *parent, MidiPlayer *player) :
     QDialog(parent),
@@ -26,10 +30,12 @@ MapChannelDialog::MapChannelDialog(QWidget *parent, MidiPlayer *player) :
 
         QTableWidgetItem *itemPort = new QTableWidgetItem();
         int port = player->midiChannel()[i].port();
-        if (port == -1) {
+        if (port < 0 || port >= devices.count()) {
+            // A saved numeric port can be stale after USB devices are changed.
+            player->setMapChannelOutput(i, -1);
             itemPort->setText(synthStr);
         } else {
-            itemPort->setText((devices[port]));
+            itemPort->setText(devices.at(port));
         }
         ui->tableWidget->setItem(i, 1, itemPort);
     }
@@ -82,12 +88,18 @@ void MapChannelDialog::setMapMidiOut(int port)
     }
 
     QList<int> ports;
+    QStringList portNames;
     for (int i=0; i<16; i++) {
-        ports.append(player->midiChannel()[i].port());
+        const int channelPort = player->midiChannel()[i].port();
+        ports.append(channelPort);
+        portNames.append(channelPort == -1
+                         ? kMidiSynthesizerSetting
+                         : devices.value(channelPort));
     }
 
     QSettings st(Config::CONFIG_APP_FILE_PATH, QSettings::IniFormat);
     st.setValue("MidiChannelMapper", QVariant::fromValue(ports));
+    st.setValue("MidiChannelMapperNames", portNames);
 }
 
 void MapChannelDialog::on_btnClose_clicked()

@@ -58,7 +58,9 @@ public:
 
 public slots:
     bool insertNCN(const QString &ncnPath, const QString &songId, const QString &midFilePath);
+#ifdef HANDYKARAOKE_ENABLE_HNK
     bool insertHNK(const QString &hnkPath, const QString &songId, const QString &hnkFilePath);
+#endif
     bool insertKAR(const QString &karPath, const QString &songId, const QString &karFilePath, const QString &fileName);
 
     void setSearchType(SearchType t) { searchType = t; }

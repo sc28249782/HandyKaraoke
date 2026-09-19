@@ -1,5 +1,8 @@
 # HandyKaraoke
 
+> Official binary releases from this project are published for non-commercial use only. This is a maintainer release policy; it does not alter the repository's GPLv3 licence. See [Official Binary Release Policy](docs/OFFICIAL-BINARY-RELEASE-POLICY.md).
+
+
 #### การติดตั้ง
   โหลดไฟล์จาก [Releases](https://github.com/pie62/HandyKaraoke/releases) แยกไฟล์ แล้วดับเบิ้ลคลิกไฟล์ HandyKaraoke เพื่อเปิดใช้งานได้เลย
   

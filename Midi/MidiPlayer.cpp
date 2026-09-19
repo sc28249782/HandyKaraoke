@@ -48,7 +48,11 @@ QStringList MidiPlayer::midiDevices()
         MIDIOUTCAPS outCaps;
         if (midiOutGetDevCaps(i, &outCaps, sizeof(MIDIOUTCAPS))  != MMSYSERR_NOERROR)
             continue;
-        outName.append(QString::fromStdWString(outCaps.szPname));
+#ifdef UNICODE
+        outName.append(QString::fromWCharArray(outCaps.szPname));
+#else
+        outName.append(QString::fromLocal8Bit(outCaps.szPname));
+#endif
     }
     #else
     MidiOut o;
@@ -71,7 +75,11 @@ QStringList MidiPlayer::midiInDevices()
         MIDIINCAPS inCaps;
         if (midiInGetDevCaps(i, &inCaps, sizeof(MIDIINCAPS))  != MMSYSERR_NOERROR)
             continue;
-        inName.append(QString::fromStdWString(inCaps.szPname));
+#ifdef UNICODE
+        inName.append(QString::fromWCharArray(inCaps.szPname));
+#else
+        inName.append(QString::fromLocal8Bit(inCaps.szPname));
+#endif
     }
     #else
     RtMidiIn in;
@@ -197,31 +205,49 @@ int MidiPlayer::beatCount()
 
 bool MidiPlayer::setMidiOut(int portNumber)
 {
-    if (portNumber != -1 && portNumber >= midiDevices().size())
+    const int deviceCount = midiDevices().size();
+    if (portNumber < -1 || portNumber >= deviceCount)
         return false;
 
     if (!isPlayerStopped())
         stop(true);
 
-    int oldPort = _midiPortNum;
+    const int oldPort = _midiPortNum;
     bool result = false;
 
     if (portNumber == -1) {
-        _midiSynth->open();
-        _midiSynth->setVolume(_volume / 100.0f);
-        _midiPortNum = -1;
-        result = true;
+        result = _midiSynth->open();
+        if (result) {
+            _midiSynth->setVolume(_volume / 100.0f);
+            _midiPortNum = -1;
+        }
     } else {
-        MidiOut *out = _midiOuts[portNumber];
+        MidiOut *out = _midiOuts.value(portNumber, nullptr);
         if (!out) {
             out = new MidiOut();
-            out->openPort(portNumber);
-            _midiOuts[portNumber] = out;
+            try {
+                out->openPort(portNumber);
+            } catch (const RtMidiError &) {
+                delete out;
+                return false;
+            }
+
+            if (!out->isPortOpen()) {
+                delete out;
+                return false;
+            }
+
+            _midiOuts.insert(portNumber, out);
         }
+
         out->setVolume(_volume / 100.0f);
         result = out->isPortOpen();
-        _midiPortNum = result ? portNumber : _midiPortNum;
+        if (result)
+            _midiPortNum = portNumber;
     }
+
+    if (!result)
+        return false;
 
     for (int i=0; i<16; i++) {
         if (_midiChannels[i].port() != oldPort)
@@ -231,18 +257,17 @@ bool MidiPlayer::setMidiOut(int portNumber)
 
     calculateUsedPort();
 
-    return result;
+    return true;
 }
 
 bool MidiPlayer::setMidiIn(int portNumber)
 {
-    if (portNumber != -1 && portNumber >= midiInDevices().size())
+    const int deviceCount = midiInDevices().size();
+    if (portNumber < -1 || portNumber >= deviceCount)
         return false;
 
     if (portNumber == _midiPortInNum)
         return true;
-
-    _midiPortInNum = portNumber;
 
     if (portNumber == -1) {
         if (_midiIn != nullptr) {
@@ -250,17 +275,28 @@ bool MidiPlayer::setMidiIn(int portNumber)
             delete _midiIn;
             _midiIn = nullptr;
         }
-    } else {
-        if (_midiIn == nullptr) {
-            _midiIn = new RtMidiIn();
-            _midiIn->openPort(portNumber);
-            _midiIn->setCallback(&midiIncallback, this);
-        } else {
-            _midiIn->closePort();
-            _midiIn->openPort(portNumber);
-        }
+        _midiPortInNum = -1;
+        return true;
     }
 
+    RtMidiIn *in = _midiIn;
+    if (in == nullptr)
+        in = new RtMidiIn();
+    else
+        in->closePort();
+
+    try {
+        in->openPort(portNumber);
+        in->setCallback(&midiIncallback, this);
+    } catch (const RtMidiError &) {
+        delete in;
+        _midiIn = nullptr;
+        _midiPortInNum = -1;
+        return false;
+    }
+
+    _midiIn = in;
+    _midiPortInNum = portNumber;
     return true;
 }
 
@@ -580,7 +616,11 @@ void MidiPlayer::setLockBass(bool lock, int number)
 
 void MidiPlayer::setMapChannelOutput(int ch, int port)
 {
-    if (port != -1 && port >= midiDevices().size())
+    if (ch < 0 || ch >= 16)
+        return;
+
+    const int deviceCount = midiDevices().size();
+    if (port < -1 || port >= deviceCount)
         return;
 
     if (port == _midiChannels[ch].port())
@@ -603,12 +643,23 @@ void MidiPlayer::setMapChannelOutput(int ch, int port)
     }
     else
     {
-        MidiOut *out = _midiOuts[port];
+        MidiOut *out = _midiOuts.value(port, nullptr);
         if (!out) {
             out = new MidiOut();
-            out->openPort(port);
+            try {
+                out->openPort(port);
+            } catch (const RtMidiError &) {
+                delete out;
+                return;
+            }
+
+            if (!out->isPortOpen()) {
+                delete out;
+                return;
+            }
+
             out->setVolume(_volume / 100.0f);
-            _midiOuts[port] = out;
+            _midiOuts.insert(port, out);
         }
 
         if (!this->isPlayerStopped()) {
@@ -691,15 +742,27 @@ void MidiPlayer::unloadNextMedley()
 
 void MidiPlayer::sendEvent(MidiEvent e)
 {
+    // Sequencer events include Meta and SysEx records.  They do not have a MIDI
+    // channel and must never be indexed through the 16-channel mixer.
+    if (e.eventType() == MidiEventType::Meta
+        || e.eventType() == MidiEventType::SysEx
+        || e.eventType() == MidiEventType::Invalid) {
+        return;
+    }
+
+    const int channel = e.channel();
+    if (channel < 0 || channel >= static_cast<int>(sizeof(_midiChannels) / sizeof(_midiChannels[0])))
+        return;
+
     _playingEventPtr = &e;
 
     if (e.eventType() == MidiEventType::Controller
         || e.eventType() == MidiEventType::ProgramChange) {
         sendEventToDevices(e);
     } else {
-        if (_midiChannels[e.channel()].isMute() == false) {
+        if (_midiChannels[channel].isMute() == false) {
             if (_useSolo) {
-                if (_midiChannels[e.channel()].isSolo()) {
+                if (_midiChannels[channel].isSolo()) {
                     sendEventToDevices(e);
                 }
             } else {

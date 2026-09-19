@@ -539,6 +539,8 @@ DWORD MidiHelper::getSpeakerFlag(SpeakerType speaker)
     case SpeakerType::SideRight:
         return BASS_SPEAKER_REAR2RIGHT;
     }
+
+    return 0;
 }
 
 bool MidiHelper::isStereoSpeaker(SpeakerType speaker)

@@ -1,6 +1,7 @@
 #include "LyricsWidget.h"
 
 #include <QPainter>
+#include <QPainterPath>
 
 
 LyricsWidget::LyricsWidget(QWidget *parent) : QWidget(parent)
